@@ -1,6 +1,7 @@
-import {validator,SyndicSchema} from "../validation/JoiShema.js";
-import Syndic from "../models/Appartment.js";
-
+import {validator,SyndicShema} from "../validation/JoiShema.js";
+import Syndic from "../models/Syndic.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 /**
  * @async
  * @route {GET} /Syndic
@@ -59,11 +60,16 @@ const getSyndic= async (req, res) => {
  * @returns {Promise<Document>} A Promise that resolves to an array of documents representing all Syndics.
  */
 const CreateSyndic = async (req, res) => {
-    const body = req.body;
-    validator(SyndicSchema, body);
-	
-    const syndic = await Syndic.create(body);
-    res.status(201).json(syndic);
+	const body = req.body;
+    validator(SyndicShema, body);
+    const existingsyndic = await Syndic.findOne({ email: body.email });
+    if (existingsyndic) {
+        return res.status(400).json({ message: "Un compte avec cet email existe déjà" });
+    }
+    const hashedPassword = await bcrypt.hash(body.password, 10);
+    const syndic = await Syndic.create({ ...body, password: hashedPassword });
+
+    return res.status(201).json(syndic);
 };
 
 /**
@@ -74,7 +80,7 @@ const CreateSyndic = async (req, res) => {
  * @returns {Promise<Document>} A Promise that resolves  documents representing Syndic.
  */
 const UpadetSyndic = async (req, res) => {
-    validator(SyndicSchema, req.body);
+    validator(SyndicShema, req.body);
     const { id } = req.params;
     const syndic = await Syndic.findByIdAndUpdate(id, res.body);
     res.status(200).json(syndic);

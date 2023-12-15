@@ -76,7 +76,7 @@ const CreateApp = async (req, res) => {
 const UpadetApp = async (req, res) => {
     validator(appartementSchema, req.body);
     const { id } = req.params;
-    const appartement = await Appartement.findByIdAndUpdate(id, res.body);
+    const appartement = await Appartement.findByIdAndUpdate(id, req.body,{new:true});
     res.status(200).json(appartement);
 };
 

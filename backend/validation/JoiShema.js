@@ -30,9 +30,10 @@ const customErrorMessages = {
  */
 const appartementSchema = Joi.object({
     numero: Joi.string().required().messages(customErrorMessages),
-    etage: Joi.number().required().messages(customErrorMessages),
+    etage: Joi.string().required().messages(customErrorMessages),
     client: Joi.string().required().messages(customErrorMessages),
 	address: Joi.string().messages(customErrorMessages),
+	prix: Joi.string().messages(customErrorMessages),
 	immeuble: Joi.string().messages(customErrorMessages)
 
 });
@@ -47,6 +48,7 @@ const SyndicShema=Joi.object(
 		lastName:Joi.string().required().messages(customErrorMessages),
 		email:Joi.string().required().messages(customErrorMessages),
 		immeuble:Joi.string().required().messages(customErrorMessages),
+		phone: Joi.string().messages(customErrorMessages),
 		password:Joi.string().required().messages(customErrorMessages)
 	
 	}

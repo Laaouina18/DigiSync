@@ -5,7 +5,7 @@ const appartementSchema = new mongoose.Schema({
     required: true,
   },
   etage: {
-    type: Number,
+    type: String,
     required: true,
   },
   client:{
@@ -13,6 +13,10 @@ const appartementSchema = new mongoose.Schema({
 	required:true
   },
   address:{
+	type:String,
+	required:true
+  },
+  prix:{
 	type:String,
 	required:true
   },

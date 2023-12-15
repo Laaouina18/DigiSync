@@ -19,6 +19,14 @@ const SyndicSchema = new mongoose.Schema({
   immeuble:{
 	type:String,
 	required:[true,, "please enter your Immeuble"]
+  },
+  phone:{
+	type:String,
+	required:[true,, "please enter your Immeuble"]
+  },
+  role:{
+    type:String,
+	default:"Syndic"
   }
 
 });
