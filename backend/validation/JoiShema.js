@@ -39,7 +39,7 @@ const appartementSchema = Joi.object({
 });
 
 /**
- *a@User
+ *@Syndic
  */
 
 const SyndicShema=Joi.object(
@@ -50,6 +50,17 @@ const SyndicShema=Joi.object(
 		immeuble:Joi.string().required().messages(customErrorMessages),
 		phone: Joi.string().messages(customErrorMessages),
 		password:Joi.string().required().messages(customErrorMessages)
+	
+	}
+)
+/**
+ *@Payement
+ */
+
+ const PayementShema=Joi.object(
+	{
+		date:Joi.object().required(),
+	   appartement:Joi.object().required()
 	
 	}
 )
@@ -69,4 +80,4 @@ const validator = (schema, data) => {
     }
 };
 
-export { appartementSchema,SyndicShema, validator };
+export { appartementSchema,SyndicShema, validator ,PayementShema};

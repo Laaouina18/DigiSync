@@ -1,7 +1,12 @@
-import React from "react";
-
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import User from "../assets/img/User.png";
-const Clients = () => {
+import { Payement } from "../redux/actions/PayementActions";
+
+const Clients = ({date,payer}) => {
+	console.log(date)
+const Apps = useSelector((state) => state.AppReducer.APPs);
+const payement = useSelector((state) => state.PayementReducer.Payements);
 
 	return (
 		<div className="w-full h-full bg-white border rounded-[8.08px] m-2">
@@ -19,61 +24,27 @@ const Clients = () => {
 						</tr>
 					</thead>
 					<tbody>
-						<tr className=" border-t-2 w-full h-[22px] ">
-							<td className="text-md px-6 py-3 flex flex-row">
-								<img className="w-[30px]" src={User} />
-								<div className="font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px] ml-2">
-									Alex Liras
-								</div>
-							</td>
-							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">millimetres (mm)</td>
-							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">
-								<button className="border px-4 py-1 bg-green-600 text-white rounded-[6px]">Payed</button>
-							</td>
-							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">14-06-2023</td>
-						</tr>
-
-						<tr className=" border-t-2 w-full ">
-							<td className="text-md px-6 py-3 flex flex-row">
-								<img className="w-[30px]" src={User} />
-								<div className="font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px] ml-2">
-									Alex Liras
-								</div>
-							</td>
-							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">centimetres (cm)</td>
-							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">
-								<button className="border px-4 py-1 bg-green-600 text-white rounded-[6px]">Payed</button>
-							</td>
-							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">14-06-2023</td>
-						</tr>
-
-						<tr className=" border-t-2 w-full h-[22px] ">
-							<td className="text-md px-6 py-3 flex flex-row">
-								<img className="w-[30px]" src={User} />
-								<div className="font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px] ml-2">
-									Alex Liras
-								</div>
-							</td>
-							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">millimetres (mm)</td>
-							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">
-								<button className="border px-4 py-1 bg-green-600 text-white rounded-[6px]">Payed</button>
-							</td>
-							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">-</td>
-						</tr>
-
-						<tr className=" border-t-2 w-full">
-							<td className="text-md px-6 py-3 flex flex-row">
-								<img className="w-[30px]" src={User} />
-								<div className="font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px] ml-2">
-									Alex Liras
-								</div>
-							</td>
-							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">metres (m)</td>
-							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">
-								<button className="border px-4 py-1 bg-green-600 text-white rounded-[6px]">Payed</button>
-							</td>
-							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">-</td>
-						</tr>
+						{Apps.map((app, index) => {
+							return (
+								<tr className=" border-t-2 w-full h-[22px] " key={index}>
+									<td className="text-md px-6 py-3 flex flex-row">
+										<img className="w-[30px]" src={User} />
+										<div className="font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px] ml-2">
+											{app.client}
+										</div>
+									</td>
+									<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">APP{index + 1}</td>
+									<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">
+					
+									{payement.find((x)=>x.appartement===app._id && x.date.month===date.month && x.date.year===date.year)?(
+									<button className="border px-4 py-1 bg-gray-600 text-white rounded-[6px]" >Payed</button>
+									):(<button className="border px-4 py-1 bg-green-600 text-white rounded-[6px]" onClick={()=>payer(date,app)}>Payer</button>
+							)};
+									</td>
+									<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">{date.month}/{date.year}</td>
+								</tr>
+							)
+						})}
 					</tbody>
 				</table>
 			</div>

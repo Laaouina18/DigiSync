@@ -1,13 +1,12 @@
 
 import Syndic from '../models/Syndic.js';
 
-const seedSyndics=async  () =>{
+const seedSyndics = async  () =>{
   await Syndic.deleteMany({});
   const adminSyndic = {
     email: 'admin@example.com',
     password: 'adminpassword',
     role: 'admin'
-
   };
 
   await Syndic.create(adminSyndic);

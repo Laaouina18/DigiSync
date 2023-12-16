@@ -15,7 +15,7 @@ const AppReducer = (state = intialState, { type, payload }) => {
             return { ...state, updatedAPP: payload };
         case actionTypes.DELETE_APP:
             return { ...state, deleteAPP: payload };
-
+		
         default:
             return state;
     }

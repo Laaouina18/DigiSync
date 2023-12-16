@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Formsgnin from "../components/FormSignin";
 import { useDispatch } from "react-redux";
-import { Login, SigninSyndic } from "../redux/actions/AuthActions";
+import {  SigninSyndic } from "../redux/actions/AuthActions";
 import signin from "../assets/img/signin.png";
 
 const Signin = () => {
