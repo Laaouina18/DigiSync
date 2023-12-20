@@ -5,6 +5,7 @@ import Factures from "../components/Factures";
 import Sidebar from "../components/Sidebar";
 import { fetchAPPs  } from "../redux/actions/AppActions";
 import {Payement,FetchPayement} from "../redux/actions/PayementActions";
+import logo from "../assets/img/Logo.png";
  const Dashboard=()=>{
 	const dispatch=useDispatch();
 	useEffect(() => {
@@ -28,7 +29,11 @@ import {Payement,FetchPayement} from "../redux/actions/PayementActions";
 	}
 
 	return(
-		<div className="grid xl:grid-cols-[20%_80%] lg:grid-cols-[20%_80%]  w-full h-full bg-gray-100">
+<div className="flex flex-col p-4 w-full h-full bg-gray-100">
+		<div className="p-4">
+          <img className="p-5 w-[200px]" src={logo} alt="Logo" />
+        </div>
+			<div className="grid xl:grid-cols-[20%_80%] lg:grid-cols-[20%_80%] ">
 		<Sidebar/>
         <div className="flex flex-col p-4">
 			<Clients date={date} payer={payer}/>
@@ -39,6 +44,8 @@ import {Payement,FetchPayement} from "../redux/actions/PayementActions";
 		</div>
       
 		</div>
+		</div>
+		
 	)
  }
  export default Dashboard;

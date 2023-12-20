@@ -10,7 +10,7 @@ const Formsgnin = ({handleChange,handleClick,FormData}) => {
 						<label className="">FirstName:</label>
 						<div className="flex flex-row h-[50px] logindiv w-full rounded-[8.08px]">
 
-							<input placeholder="enter your name" name="firstName" value={FormData.firstName} onChange={handleChange} className=" p-4 outline-none w-full loginInput" />
+							<input required  placeholder="enter your name" name="firstName" value={FormData.firstName} onChange={handleChange} className=" p-4 outline-none w-full loginInput" />
 							<div className="bg-blue-900 rounded-[8.08px] ">
 
 							</div>
@@ -22,7 +22,7 @@ const Formsgnin = ({handleChange,handleClick,FormData}) => {
 						<label>LastName:</label>
 						<div className="flex flex-row h-[50px]  logindiv w-full rounded-[8.08px] ">
 
-							<input placeholder="enter your name" value={FormData.lastName} name="lastName" onChange={handleChange} className="p-4 outline-none w-full loginInput" />
+							<input required  placeholder="enter your name" value={FormData.lastName} name="lastName" onChange={handleChange} className="p-4 outline-none w-full loginInput" />
 							<div className="bg-blue-900 rounded-[8.08px]">
 
 							</div>
@@ -37,7 +37,7 @@ const Formsgnin = ({handleChange,handleClick,FormData}) => {
 						<label className="">Email:</label>
 						<div className="flex flex-row h-[50px] logindiv w-full rounded-[8.08px]">
 
-							<input placeholder="enter your email" name="email" value={FormData.email} onChange={handleChange} className=" p-4 outline-none w-full loginInput" />
+							<input required  placeholder="enter your email" name="email" value={FormData.email} onChange={handleChange} className=" p-4 outline-none w-full loginInput" />
 							<div className="bg-blue-900 rounded-[8.08px] ">
 
 							</div>
@@ -49,7 +49,7 @@ const Formsgnin = ({handleChange,handleClick,FormData}) => {
 						<label>Mobile:</label>
 						<div className="flex flex-row h-[50px]  logindiv w-full rounded-[8.08px] ">
 
-							<input placeholder="enter your numberphone" name="phone" value={FormData.phone} onChange={handleChange} className="p-4 outline-none w-full loginInput" />
+							<input required  placeholder="enter your numberphone" name="phone" value={FormData.phone} onChange={handleChange} className="p-4 outline-none w-full loginInput" />
 							<div className="bg-blue-900 rounded-[8.08px]">
 
 							</div>
@@ -64,7 +64,7 @@ const Formsgnin = ({handleChange,handleClick,FormData}) => {
 						<label className="">Password:</label>
 						<div className="flex flex-row h-[50px] logindiv w-full rounded-[8.08px]">
 
-							<input placeholder="xxxxxx" value={FormData.password} name="password" onChange={handleChange} type="password" className=" p-4 outline-none w-full loginInput" />
+							<input required  placeholder="xxxxxx" value={FormData.password} name="password" onChange={handleChange} type="password" className=" p-4 outline-none w-full loginInput" />
 							<div className="bg-blue-900 rounded-[8.08px] ">
 
 							</div>
@@ -76,7 +76,7 @@ const Formsgnin = ({handleChange,handleClick,FormData}) => {
 						<label>Confirm Password:</label>
 						<div className="flex flex-row h-[50px]  logindiv w-full rounded-[8.08px] ">
 
-							<input placeholder="xxxxxx" type="password" value={FormData.repeatpass} name="repeatpass" onChange={handleChange} className="p-4 outline-none w-full loginInput" />
+							<input required  placeholder="xxxxxx" type="password" value={FormData.repeatpass} name="repeatpass" onChange={handleChange} className="p-4 outline-none w-full loginInput" />
 							<div className="bg-blue-900 rounded-[8.08px]">
 
 							</div>
@@ -89,7 +89,7 @@ const Formsgnin = ({handleChange,handleClick,FormData}) => {
 					<label>Immeuble:</label>
 					<div className="flex flex-row h-[50px]  logindiv w-3/6 rounded-[8.08px] ">
 
-						<input placeholder="immeuble" name="immeuble" value={FormData.immeuble} onChange={handleChange} className="p-4 outline-none w-full loginInput" />
+						<input required  placeholder="immeuble" name="immeuble" value={FormData.immeuble} onChange={handleChange} className="p-4 outline-none w-full loginInput" />
 						<div className="bg-blue-900 rounded-[8.08px]">
 
 						</div>

@@ -1,7 +1,9 @@
 import {validator,SyndicShema} from "../validation/JoiShema.js";
 import Syndic from "../models/Syndic.js";
+import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import Appartement from '../models/Appartment.js';
 /**
  * @async
  * @route {GET} /Syndic
@@ -17,7 +19,21 @@ const getAllSyndic = async (req, res) => {
 	  res.status(500).json({ message: error.message });
 	}
   };
+  
+  const getApartmentsForSyndic = async (req, res) => {
+	try {
+	  const { id } = req.params;
+	
+	  const apartments = await Appartement.find({syndic:id });
+  
+	  return res.status(200).json(apartments);
+	} catch (error) {
+	  console.error(error);
+	  return res.status(500).json({ message: 'Internal Server Error' });
+	}
+  };
 
+  
 /**
  * @async
  * @route {GET} /Syndic
@@ -107,4 +123,4 @@ const DeleteSyndic = async (req, res) => {
  * @returns {Promise<Document>} A Promise that resolves todocuments representing all Syndic.
  */
 
-export { getAllSyndic, CreateSyndic, UpadetSyndic, DeleteSyndic, getSyndic, Search };
+export { getAllSyndic, CreateSyndic, UpadetSyndic, DeleteSyndic, getSyndic, Search,getApartmentsForSyndic };

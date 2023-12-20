@@ -1,5 +1,6 @@
 import {validator,appartementSchema} from "../validation/JoiShema.js";
 import Appartement from "../models/Appartment.js";
+import Syndic from "../models/Syndic.js";
 
 /**
  * @async
@@ -10,7 +11,7 @@ import Appartement from "../models/Appartment.js";
 const getAllApp = async (req, res) => {
   
 	try {
-	  const appartements = await Appartement.find()
+	  const appartements = await Appartement.find(req.body)
 	  res.json(appartements);
 	} catch (error) {
 	  res.status(500).json({ message: error.message });
@@ -58,13 +59,32 @@ const getApp= async (req, res) => {
  * @access public
  * @returns {Promise<Document>} A Promise that resolves to an array of documents representing all Appartements.
  */
+// Other imports...
+
 const CreateApp = async (req, res) => {
-    const body = req.body;
-    validator(appartementSchema, body);
-	
-    const appartement = await Appartement.create(body);
-    res.status(201).json(appartement);
+	console.log("hi",req.body)
+    try {
+        const { syndic } = req.body;
+        validator(appartementSchema, req.body);
+
+        const appartementCreated = await Appartement.create(req.body);
+        const syndictoUpdate = await Syndic.findById(syndic);
+
+        if (!syndictoUpdate) {
+            return res.status(404).json({ message: "Syndic not found" });
+        }
+		
+        syndictoUpdate.Appartements.push(appartementCreated);
+        await syndictoUpdate.save();
+
+        res.status(201).json(appartementCreated);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
 };
+
+
 
 /**
  * Update new Appartement.

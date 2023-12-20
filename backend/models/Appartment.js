@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Payement from "./Payement.js";
+import Syndic from "./Syndic.js"
 const appartementSchema = new mongoose.Schema({
 	numero: {
 		type: String,
@@ -27,7 +28,11 @@ const appartementSchema = new mongoose.Schema({
 	},
 	payement: [{
 		type: mongoose.Schema.Types.ObjectId, ref: 'Payement'
-	}]
+	}],
+	syndic:{
+		type:String,
+		required:true
+	}
 });
 const Appartement = mongoose.model('Appartement', appartementSchema);
 export default Appartement;

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import Formsgnin from "../components/FormSignin";
-import { useDispatch } from "react-redux";
+import { useDispatch ,useSelector} from "react-redux";
 import {  SigninSyndic } from "../redux/actions/AuthActions";
 import signin from "../assets/img/signin.png";
-
+import { useNavigate } from "react-router-dom";
 const Signin = () => {
+	const navigate=useNavigate();
+	const message=useSelector((state)=>state.AuthReducer.error);
 	const dispatch = useDispatch();
 	const [Form, setForm] = useState(
 		{
@@ -25,9 +27,25 @@ const Signin = () => {
 		}));
 
 	}
+	
 	const handleClick = () => {
+		const fieldsWithErrors = Object.keys(Form).filter((field) => Form[field].trim() === "");
+		if (Form.password !== Form.repeatpass) {
+			alert("Password and Repeat Password do not match");
+			return;
+		  }
+		if (fieldsWithErrors.length > 0) {
+		  alert(`Please fill in all fields: ${fieldsWithErrors.join(", ")}`);
+		  return;
+		}
 		const {firstName,lastName,email,phone,password,immeuble}=Form;
 		dispatch(SigninSyndic({firstName,lastName,email,phone,password,immeuble}));
+		const message=localStorage.getItem('message');
+		if(message){
+			alert(message);
+			return;
+		}
+		navigate('/login');
 	}
 	return (
 		<div className="grid xl:grid-cols-[60%_40%] lg:grid-cols-[60%_40%]  w-full h-screen">

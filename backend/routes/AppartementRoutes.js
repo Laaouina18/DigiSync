@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 const router = Router();
 import { CreateApp, UpadetApp, DeleteApp, getAllApp, getApp, Search } from "../controllers/AppartmentController.js";
 router.post("/", CreateApp);

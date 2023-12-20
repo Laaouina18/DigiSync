@@ -34,7 +34,8 @@ const appartementSchema = Joi.object({
     client: Joi.string().required().messages(customErrorMessages),
 	address: Joi.string().messages(customErrorMessages),
 	prix: Joi.string().messages(customErrorMessages),
-	immeuble: Joi.string().messages(customErrorMessages)
+	immeuble: Joi.string().messages(customErrorMessages),
+	syndic:Joi.string().required()
 
 });
 

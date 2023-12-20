@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import circle from "../assets/img/circle.png";
 import Icon from "../assets/img/Icon.png";
 import home from "../assets/img/home.png";
 import { useSelector } from "react-redux";
-const Appartement = ({handlClick,supprimer,update}) => {
+const Appartement = ({handlClick,supprimer,update,ajouter,show}) => {
+	
 	const Apps = useSelector((state) => state.AppReducer.APPs);
 	return (
 		<div className="w-full h-full bg-white border rounded-[8.08px] m-2">
-		<div className="flex justify-end p-4" onClick={() => handlClick()}>
-			<img src={Icon}/>
+		<div className="flex justify-end p-4" >
+		{ajouter?(<button className="text-green-500" onClick={() => handlClick()}>Ajouter Appartement</button>):("")}
+			<img src={Icon} onClick={show}/>
+			
 		</div>
 		   <div className="flex flex-row justify-between w-[100px] p-4" >
 			<img src={circle}   />

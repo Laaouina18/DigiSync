@@ -7,6 +7,8 @@ const seedSyndics = async  () =>{
     email: 'admin@example.com',
     password: 'adminpassword',
     role: 'admin'
+
+
   };
 
   await Syndic.create(adminSyndic);
