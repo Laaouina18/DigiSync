@@ -3,6 +3,9 @@ import circle from "../assets/img/circle.png";
 import Icon from "../assets/img/Icon.png";
 import home from "../assets/img/home.png";
 import { useSelector } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
+
 const Appartement = ({handlClick,supprimer,update,ajouter,show}) => {
 	
 	const Apps = useSelector((state) => state.AppReducer.APPs);
@@ -42,8 +45,14 @@ const Appartement = ({handlClick,supprimer,update,ajouter,show}) => {
 							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">{app.client}</td>
 							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">{app.prix}DH</td>
 							<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]"><div className="flex flex-row jutify-between">
-								<button className="m-3" onClick={()=>supprimer(app._id)}>delete</button>
-								<button onClick={()=>update(app)}>edit</button>
+							<div className="flex flex-row justify-between">
+                      <button className="m-3" onClick={() => supprimer(app._id)}>
+                        <FontAwesomeIcon icon={faTrash} className="text-red-500" />
+                      </button>
+                      <button onClick={() => update(app)}>
+                        <FontAwesomeIcon icon={faEdit} className="text-green-600"/>
+                      </button>
+                    </div>
 							</div></td>
 						</tr>	
 							);

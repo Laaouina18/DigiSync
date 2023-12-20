@@ -14,7 +14,7 @@ const getAllApp = async (req, res) => {
 	  const appartements = await Appartement.find(req.body)
 	  res.json(appartements);
 	} catch (error) {
-	  res.status(500).json({ message: error.message });
+	 throw  error;
 	}
   };
 
@@ -29,27 +29,10 @@ const getApp= async (req, res) => {
 	const {id}=req.params;
 	try {
 	  const appartement = await Appartement.findById(id);
-	
-	
+
 	  return res.json(appartement);
 	} catch (error) {
-	  return res.status(500).json({ message: error.message });
-	}
-  };
-  const Search= async (req, res) => {
-	
-	const {immeuble,numero,etage} = req.query;
-	const query = {};
-  
-	if (immeuble) {
-	  query.immeuble = { $regex: immeuble, $options: 'i' };
-	}
-  
-	try {
-	  const appartements = await Appartement.find(query);
-	  return res.json(appartements);
-	} catch (error) {
-	  return res.status(500).json({ message: error.message });
+		throw  error;;
 	}
   };
 /**
@@ -59,10 +42,9 @@ const getApp= async (req, res) => {
  * @access public
  * @returns {Promise<Document>} A Promise that resolves to an array of documents representing all Appartements.
  */
-// Other imports...
+
 
 const CreateApp = async (req, res) => {
-	console.log("hi",req.body)
     try {
         const { syndic } = req.body;
         validator(appartementSchema, req.body);
@@ -79,8 +61,7 @@ const CreateApp = async (req, res) => {
 
         res.status(201).json(appartementCreated);
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Internal Server Error" });
+		throw  error;
     }
 };
 
@@ -94,10 +75,15 @@ const CreateApp = async (req, res) => {
  * @returns {Promise<Document>} A Promise that resolves  documents representing Appartement.
  */
 const UpadetApp = async (req, res) => {
-    validator(appartementSchema, req.body);
-    const { id } = req.params;
-    const appartement = await Appartement.findByIdAndUpdate(id, req.body,{new:true});
-    res.status(200).json(appartement);
+	try {
+		validator(appartementSchema, req.body);
+		const { id } = req.params;
+		const appartement = await Appartement.findByIdAndUpdate(id, req.body,{new:true});
+		res.status(200).json(appartement);
+	} catch (error) {
+		throw  error;
+	}
+
 };
 
 /**
@@ -109,16 +95,15 @@ const UpadetApp = async (req, res) => {
  */
 
 const DeleteApp = async (req, res) => {
-    const { id } = req.params;
-    const appartement = await Appartement.findByIdAndDelete(id);
-    res.status(200).json(appartement);
+	try {
+		const { id } = req.params;
+		const appartement = await Appartement.findByIdAndDelete(id);
+		res.status(200).json(appartement);
+	} catch (error) {
+		throw  error;
+	}
+ 
 };
 
-/**
- * @async
- * @route {PATCH} /Appartement/likes/id
- * @access public
- * @returns {Promise<Document>} A Promise that resolves todocuments representing all Appartement.
- */
 
-export { getAllApp, CreateApp, UpadetApp, DeleteApp, getApp, Search };
+export { getAllApp, CreateApp, UpadetApp, DeleteApp, getApp};

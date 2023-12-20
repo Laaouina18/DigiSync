@@ -3,7 +3,6 @@ import axios from "../../api/Axios";
 const userString = localStorage.getItem('user');
 const userObject = JSON.parse(userString);
 const token=userObject?.token;
-console.log(token);
 const headers = {
 	authorization: `Bearer ${token}`,
 };
@@ -24,7 +23,6 @@ const Payement = (date,app) => {
 			immeuble:app.immeuble, 
 			prix:app.prix
 		}
-		console.log(app);
     return async (dispatch) => {
         const response = await axios.post(`/payement`,{date,appartement},{ headers });
         dispatch({ type: actionTypes.PAYEMENT, payload: response.data });

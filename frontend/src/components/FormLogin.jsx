@@ -1,7 +1,8 @@
 import React from "react";
 import email from "../assets/email.png";
+import { Navigate, useNavigate } from "react-router-dom";
 export const FormLogin = ({form,handleChange,handleClick}) => {
-
+const navigate=useNavigate();
   return (
     <div className="bg-white w-[439px] h-full">
 	<div className=" h-[24px] mt-28 mb-16 ">
@@ -37,6 +38,7 @@ export const FormLogin = ({form,handleChange,handleClick}) => {
  <button className="bg-blue-900 p-3 text-white font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px] rounded-[8.08px] w-full" onClick={handleClick}>Login Now</button>
 	
  </div>
+ <div>Vous n{"'"}avez pas  un compte ?<button className="text-blue-600" onClick={()=>navigate('/signin')}>Sign in</button></div>
 	 </form>
     </div>
   );

@@ -4,11 +4,9 @@ const userString = localStorage.getItem('user');
     const userObject = JSON.parse(userString);
 	const syndicId = userObject?.syndic?._id;
 	const token=userObject?.token;
-	console.log(token);
 	const headers = {
 		authorization: `Bearer ${token}`,
 	};
-	console.log(headers);
 const fetchAPPs = () => {
 	
     return async (dispatch) => {
@@ -30,7 +28,7 @@ const CreateAPP = (APP) => {
 
    
 
-    console.log(Appartement);
+  
 
     return async (dispatch) => {
         const response = await axios.post("/appartements", Appartement,{headers});
@@ -44,7 +42,6 @@ const UpdateAPP = (APP, id) => {
 	const {etage,immeuble,prix,numero,client}=APP;
     return async (dispatch) => {
         const response = await axios.patch(`/appartements/${id}`,{etage,immeuble,prix,numero,client},{ headers });
-		console.log(response);
         dispatch({ type: actionTypes.UPDATE_APP, payload: response.data });
 
         dispatch(fetchAPPs());

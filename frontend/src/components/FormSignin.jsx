@@ -1,6 +1,7 @@
 import React from "react";
-
+import {useNavigate} from "react-router-dom";
 const Formsgnin = ({handleChange,handleClick,FormData}) => {
+ const navigate=useNavigate();
 	return (
 		<div>
 			<form>
@@ -102,6 +103,8 @@ const Formsgnin = ({handleChange,handleClick,FormData}) => {
 						Sign up
 					</button>
 				</div>
+				
+				<div>Vous avez déja un compte ? <button className="text-blue-600" onClick={()=>navigate("/login")}>Login</button></div>
 			</form>
 
 		</div>

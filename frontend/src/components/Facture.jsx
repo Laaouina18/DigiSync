@@ -13,17 +13,16 @@ const styles = StyleSheet.create({
   }
 });
 
-const Facture = ({app}) => (
+const Facture = ({month,year,client,prix}) => (
   <Document>
+  
     <Page size="A4" style={styles.page}>
+	<Text>vous avez payer le mois {month}/{year}</Text>
       <View style={styles.section}>
-        <Text>client:</Text>
-      </View>
-	  <View style={styles.section}>
-        <Text>appartement:</Text>
+        <Text>client:{client}</Text>
       </View>
       <View style={styles.section}>
-        <Text>prix:</Text>
+        <Text>prix:{prix}</Text>
       </View>
     </Page>
   </Document>

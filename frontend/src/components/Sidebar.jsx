@@ -1,10 +1,17 @@
 import React from "react";
 import { Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faHome, faChartBar, faUser, faFileAlt } from '@fortawesome/free-solid-svg-icons';
+import {faHome, faChartBar, faUser,  faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
+import {useNavigate} from "react-router-dom";
 
 const Sidebar = () => {
+	const navigate=useNavigate();
+	const logout =()=>{
+		if(window.confirm("vous voulez deconnecter")){
+     localStorage.removeItem('user');
+	 navigate('/login');}
+	}
   const location = useLocation();
   return (
     <div className="h-full">
@@ -43,12 +50,13 @@ const Sidebar = () => {
             <div className="font-family:'Poppings-SemiBold',Helvetica] text-gray-400 text-[16.2px] w-[63px] ml-4  ">Profile</div>
           </div>
 
-          <div className="m-4 flex flex-row rounded-[15px] w-[255px] h-[32px]">
-            <div className="bg-white rounded-[8.08px]">
-              <FontAwesomeIcon icon={faFileAlt} className="w-[30px] text-blue-600 flex justify-center p-2" />
-            </div>
-            <div className="font-family:'Poppings-SemiBold',Helvetica] text-gray-400 text-[16.2px] ml-4  ">Sign In</div>
-          </div>
+          <div className="m-4 flex flex-row rounded-[15px] w-[255px] h-[32px]" onClick={logout}>
+  <div className="bg-white rounded-[8.08px]">
+    <FontAwesomeIcon icon={faSignOutAlt} className="w-[30px] text-blue-600 flex justify-center p-2" />
+  </div>
+  <div className="font-family:'Poppings-SemiBold',Helvetica] text-gray-400 text-[16.2px] ml-4">Logout</div>
+</div>
+
         </div>
       </div>
     </div>

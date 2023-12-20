@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import User from "../assets/img/User.png";
 import { Payement } from "../redux/actions/PayementActions";
 import {PDFDownloadLink} from '@react-pdf/renderer';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import Facture from './Facture';
 const Clients = ({date,payer}) => {
 	
@@ -51,9 +52,10 @@ const payement = useSelector((state) => state.PayementReducer.Payements);
 									</td>
 									<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">{date.month}/{date.year}</td>
 						<td className="text-md px-6 py-3 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">
-						<PDFDownloadLink document={<Facture apartment={app}/>} fileName="Facture Payment"  >
-						telecharger
-          </PDFDownloadLink>
+						{payement.find((x)=>x.appartement===app._id && x.date.month===date.month && x.date.year===date.year)?(
+							<PDFDownloadLink document={<Facture prix={app.prix} client={app.client} year={date.year} month={date.month}/>} fileName="Facture Payment">
+  <FontAwesomeIcon icon={faDownload} style={{ color: 'red' }} />
+</PDFDownloadLink>):("---")}
 						</td>
 								</tr>
 							)

@@ -15,7 +15,7 @@ const AuthReducer = (state = initialState, { type, payload }) => {
 			return { ...state, user: null, error: null };
 		case actionTypes.SIGNIN_FAILURE:
 			localStorage.setItem('message',JSON.stringify(payload));
-			return { ...state, user: null, error: payload };
+			return { ...state, user: null, error: null };
 		case actionTypes.LOGIN_SUCCESS:
 			localStorage.setItem('user',JSON.stringify(payload));
 			return {
@@ -28,7 +28,7 @@ const AuthReducer = (state = initialState, { type, payload }) => {
 			return {
 				...state,
 				user: null,
-				error: payload,
+				error: null,
 			};
 		default:
 			return state;

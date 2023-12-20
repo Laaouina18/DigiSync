@@ -6,7 +6,7 @@ const NotFound=()=>{
 
 
 	return(
-		<div>
+		<div className="flex justify-center">
 			not found
 		</div>
 	)

@@ -20,16 +20,19 @@ const createPayement = async (req, res) => {
 
     return res.status(200).json(payment);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    throw new error;
   }
 };
 const getPayement = async (req,res)=>{
-
-    const payment = await Payement.find();
+try {
+	const payment = await Payement.find();
 	if(!payment){
 		return res.status(400).json({message:"n'exite pas"})
 	}
 	return res.status(200).json(payment);
+} catch (error) {
+	throw new error;
+}
+ 
 }
 export { createPayement ,getPayement };

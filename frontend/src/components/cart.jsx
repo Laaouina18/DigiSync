@@ -15,7 +15,7 @@ const Cart = ({ numAPP }) => {
           </div>
         </div>
         <div className="bg-blue-400 w-[30px] rounded-[8.08px]">
-          <FontAwesomeIcon icon={faHome} className="flex text-white justify-center " />
+          <FontAwesomeIcon icon={faHome} className="flex text-white justify-center ml-[5px] mt-[11px]" />
         </div>
       </div>
 
@@ -29,7 +29,7 @@ const Cart = ({ numAPP }) => {
           </div>
         </div>
         <div className="bg-blue-400 w-[30px] rounded-[8.08px]">
-          <FontAwesomeIcon icon={faUsers} className="text-white flex justify-center " />
+          <FontAwesomeIcon icon={faUsers} className="text-white flex justify-center ml-[5px] mt-[11px]" />
         </div>
       </div>
       <div className="flex flex-row justify-between w-3/12 p-2 bg-white rounded-[8.08px] h-[60px]">
@@ -42,7 +42,7 @@ const Cart = ({ numAPP }) => {
           </div>
         </div>
         <div className="w-[30px] bg-blue-400 rounded-[8.08px]">
-          <FontAwesomeIcon icon={faMoneyBillAlt} className="text-white flex justify-center " />
+          <FontAwesomeIcon icon={faMoneyBillAlt} className="text-white flex justify-center ml-[5px] mt-[11px]" />
         </div>
       </div>
     </div>

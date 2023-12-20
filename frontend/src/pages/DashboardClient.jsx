@@ -23,13 +23,15 @@ import logo from "../assets/img/Logo.png";
 		year:year
 	}
 	const payer=(date,app)=>{
+		if(window.confirm("vous voulez payer cette appartement")){
 		const {_id,client,address,prix,numero,etage,immeuble}=app;
-        
       dispatch(Payement(date,{_id,client,address,prix,numero,etage,immeuble}));
+	    alert("appartement payée avec succée")
+	}
 	}
 
 	return(
-<div className="flex flex-col p-4 w-full h-full bg-gray-100">
+<div className="flex flex-col p-4 w-full h-screen bg-gray-100">
 		<div className="p-4">
           <img className="p-5 w-[200px]" src={logo} alt="Logo" />
         </div>
@@ -37,9 +39,7 @@ import logo from "../assets/img/Logo.png";
 		<Sidebar/>
         <div className="flex flex-col p-4">
 			<Clients date={date} payer={payer}/>
-			<div className="flex justify-center mt-2">
-			<Factures/>
-			</div>
+			
 			
 		</div>
       
