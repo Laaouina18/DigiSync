@@ -10,7 +10,7 @@ import NotFound from './pages/NotFound';
 import Facture from './components/Facture';
 import { Provider } from 'react-redux';
 import PrivetRoute from './PrivetRoute';
-
+import SyndicProfile from './components/syndicProfile';
 const App = () => {
 	
   return (
@@ -23,6 +23,7 @@ const App = () => {
           <Route  element={<PrivetRoute />} >
 		  <Route path="/dashboard" element={<Dashboard />} />
 		  <Route path="/" element={<Dashboard />} />
+      <Route path="/profile" element={<SyndicProfile />} />
 		  <Route path="/dashboardclient" element={<DashboardClient />} />
           <Route path="/facture" element={<Facture />} />
 		  <Route path="/dashboardclient" element={<DashboardClient />} />
