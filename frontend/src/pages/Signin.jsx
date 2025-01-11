@@ -48,13 +48,9 @@ const Signin = () => {
 		navigate('/login');
 	}
 	return (
-		<div className="grid xl:grid-cols-[60%_40%] lg:grid-cols-[60%_40%]  w-full h-screen">
-
-			<div className="mt-24 flex justify-center">
+		
 				<Formsgnin FormData={Form} handleChange={handleChange} handleClick={handleClick} />
-			</div>
-			<img src={signin} className="w-full" />
-		</div>
+		
 	)
 }
 export default Signin;

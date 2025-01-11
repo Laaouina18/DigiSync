@@ -19,11 +19,11 @@ const LoginSyndic = (user) => {
 	return async (dispatch) => {
 		try {
 			const response = await axios.post("/auth/login", user);
-
+console.log(response)
 			dispatch({ type: actionTypes.LOGIN_SUCCESS, payload: response.data });
 		} catch (error) {
 
-			dispatch({ type: actionTypes.LOGIN_FAILURE, payload: error.response.data.message });
+			dispatch({ type: actionTypes.LOGIN_FAILURE, payload: error });
 		}
 
 	};

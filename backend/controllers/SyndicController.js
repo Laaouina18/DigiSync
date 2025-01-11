@@ -64,10 +64,11 @@ const CreateSyndic = async (req, res) => {
 		}
 		const hashedPassword = await bcrypt.hash(body.password, 10);
 		const syndic = await Syndic.create({ ...body, password: hashedPassword });
+		return res.status(201).json(syndic);
 	} catch (error) {
 		throw new error
 	}
-	return res.status(201).json(syndic);
+	
 };
 
 /**

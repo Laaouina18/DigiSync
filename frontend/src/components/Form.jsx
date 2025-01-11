@@ -1,135 +1,243 @@
-import React, { Fragment, useRef, useState,useEffect } from 'react';
+import React from 'react';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Alert,
+  Snackbar,
+  Box,
+  Typography,
+  Stack,
+  IconButton,
+  useTheme,
+} from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import CloseIcon from '@mui/icons-material/Close';
+import SaveIcon from '@mui/icons-material/Save';
+import EditIcon from '@mui/icons-material/Edit';
 
-import { Dialog, Transition } from '@headlessui/react'
+const Form = ({ status, setStatus, clear, formData, handleChange, handleSubmit, type, update }) => {
+  const theme = useTheme();
+  const [loading, setLoading] = React.useState(false);
+  const [alert, setAlert] = React.useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
+  const [errors, setErrors] = React.useState({});
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Validate etage (should be a number)
+    if (!formData.etage || isNaN(formData.etage)) {
+      newErrors.etage = "L'étage doit être un nombre valide";
+    }
 
-export default function Form({status,setStatus,clear,formData,handleChange,handleSubmit,type,update}) {
-  const cancelButtonRef = useRef(null);
- 
+    // Validate prix (should be a positive number)
+    if (!formData.prix || isNaN(formData.prix) || Number(formData.prix) <= 0) {
+      newErrors.prix = 'Le prix doit être un nombre positif';
+    }
+
+    // Validate numero (should not be empty)
+    if (!formData.numero || formData.numero.trim() === '') {
+      newErrors.numero = 'Le numéro est requis';
+    }
+
+    // Validate client (at least 3 characters)
+    if (!formData.client || formData.client.length < 3) {
+      newErrors.client = 'Le nom du client doit contenir au moins 3 caractères';
+    }
+
+    // Validate address (at least 5 characters)
+    if (!formData.address || formData.address.length < 5) {
+      newErrors.address = "L'adresse doit contenir au moins 5 caractères";
+    }
+
+    // Validate immeuble (should not be empty)
+    if (!formData.immeuble || formData.immeuble.trim() === '') {
+      newErrors.immeuble = "Le nom de l'immeuble est requis";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleFormSubmit = async () => {
+    if (!validateForm()) {
+      setAlert({
+        open: true,
+        message: 'Veuillez corriger les erreurs dans le formulaire',
+        severity: 'error'
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (type === "submit") {
+        await handleSubmit();
+      } else {
+        await update();
+      }
+      setAlert({
+        open: true,
+        message: type === "submit" ? 'Données enregistrées avec succès' : 'Données mises à jour avec succès',
+        severity: 'success'
+      });
+      setStatus(false);
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: 'Une erreur est survenue',
+        severity: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <Transition.Root show={status} as={Fragment}>
-      <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={()=>setStatus(false)}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-        </Transition.Child>
+    <>
+      <Dialog 
+        open={status}
+        onClose={() => setStatus(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            boxShadow: theme.shadows[10]
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: 1 }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
+              {type === "submit" ? "Nouvel Appartement" : "Modifier Appartement"}
+            </Typography>
+            <IconButton onClick={() => setStatus(false)} size="small">
+              <CloseIcon />
+            </IconButton>
+          </Stack>
+        </DialogTitle>
 
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-              <Dialog.Panel    className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
-                    
-                    <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
-					<form>
-                        <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                          Etage
-                        </label>
-                        <input
-                          type="text"
-                          id="username"
-                          name="etage"
-                          value={formData.etage}
-						  onChange={handleChange}
-                          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                        />
-						<label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                          Prix
-                        </label>
-                        <input
-                          type="text"
-                          id="username"
-                          name="prix"
-                          value={formData.prix}
-						  onChange={handleChange}
-                          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                        />
-						<label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                          nmero
-                        </label>
-                        <input
-                          type="text"
-                          id="username"
-                          name="numero"
-                          value={formData.numero}
-						  onChange={handleChange}
-                          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                        />
-						<label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                          client
-                        </label>
-                        <input
-                          type="text"
-                          id="username"
-                          name="client"
-                          value={formData.client}
-						  onChange={handleChange}
-                          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                        />
-						<label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                       Address
-                        </label>
-                        <input
-                          type="text"
-                          id="username"
-                          name="address"
-                          value={formData.address}
-						  onChange={handleChange}
-                          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                        />
-						<label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                          Immeuble
-                        </label>
-                        <input
-                          type="text"
-                          id="username"
-                          name="immeuble"
-                          value={formData.immeuble}
-						  onChange={handleChange}
-                          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                        />
-                        <div className="mt-2">
-                          <button
-                            type="button"
-                            className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
-                            onClick={type ==="submit"? handleSubmit: update}
-                          >
-						  {type ==="submit"?" Submit":"update"}
-                           
-                          </button>
-                          <button
-                            type="button"
-                            className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                            onClick={clear}
-                            ref={cancelButtonRef}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
+        <DialogContent dividers>
+          <Box component="form" noValidate sx={{ mt: 1 }}>
+            <Stack spacing={2.5}>
+              <TextField
+                fullWidth
+                label="Étage"
+                name="etage"
+                value={formData.etage}
+                onChange={handleChange}
+                error={!!errors.etage}
+                helperText={errors.etage}
+                size="small"
+              />
+
+              <TextField
+                fullWidth
+                label="Prix"
+                name="prix"
+                value={formData.prix}
+                onChange={handleChange}
+                error={!!errors.prix}
+                helperText={errors.prix}
+                size="small"
+                InputProps={{
+                  endAdornment: <Typography variant="body2">DH</Typography>
+                }}
+              />
+
+              <TextField
+                fullWidth
+                label="Numéro"
+                name="numero"
+                value={formData.numero}
+                onChange={handleChange}
+                error={!!errors.numero}
+                helperText={errors.numero}
+                size="small"
+              />
+
+              <TextField
+                fullWidth
+                label="Client"
+                name="client"
+                value={formData.client}
+                onChange={handleChange}
+                error={!!errors.client}
+                helperText={errors.client}
+                size="small"
+              />
+
+              <TextField
+                fullWidth
+                label="Adresse"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                error={!!errors.address}
+                helperText={errors.address}
+                size="small"
+              />
+
+              <TextField
+                fullWidth
+                label="Immeuble"
+                name="immeuble"
+                value={formData.immeuble}
+                onChange={handleChange}
+                error={!!errors.immeuble}
+                helperText={errors.immeuble}
+                size="small"
+              />
+            </Stack>
+          </Box>
+        </DialogContent>
+
+        <DialogActions sx={{ px: 3, py: 2 }}>
+          <Button
+            variant="outlined"
+            onClick={clear}
+            color="inherit"
+            disabled={loading}
+          >
+            Annuler
+          </Button>
+          <LoadingButton
+            variant="contained"
+            onClick={handleFormSubmit}
+            loading={loading}
+            loadingPosition="start"
+            startIcon={type === "submit" ? <SaveIcon /> : <EditIcon />}
+          >
+            {type === "submit" ? "Enregistrer" : "Modifier"}
+          </LoadingButton>
+        </DialogActions>
       </Dialog>
-    </Transition.Root>
-  )
-}
+
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={6000}
+        onClose={() => setAlert({ ...alert, open: false })}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={() => setAlert({ ...alert, open: false })}
+          severity={alert.severity}
+          variant="filled"
+          elevation={6}
+        >
+          {alert.message}
+        </Alert>
+      </Snackbar>
+    </>
+  );
+};
+
+export default Form;

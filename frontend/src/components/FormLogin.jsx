@@ -1,46 +1,196 @@
-import React from "react";
-import email from "../assets/email.png";
-import { Navigate, useNavigate } from "react-router-dom";
-export const FormLogin = ({form,handleChange,handleClick}) => {
-const navigate=useNavigate();
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Container,
+  InputAdornment,
+  Paper,
+  Grid
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import EmailIcon from '@mui/icons-material/Email';
+import LockIcon from '@mui/icons-material/Lock';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+
+// Styled components
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  marginTop: theme.spacing(4),
+  padding: theme.spacing(4),
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  maxWidth: 1000,
+  width: '100%',
+  borderRadius: 16,
+  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+}));
+
+const StyledForm = styled('form')(({ theme }) => ({
+  width: '100%',
+  marginTop: theme.spacing(2),
+}));
+
+const LoginContainer = styled(Box)(({ theme }) => ({
+  minHeight: '100vh',
+  background: 'linear-gradient(135deg, #f6f9fc 0%, #edf2f7 100%)',
+  padding: theme.spacing(3),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const BuildingImage = styled(Box)(({ theme }) => ({
+  background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+  borderRadius: '16px',
+  padding: theme.spacing(4),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'white',
+  minHeight: 400,
+}));
+
+export const FormLogin = ({ form, handleChange, handleClick }) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="bg-white w-[439px] h-full">
-	<div className=" h-[24px] mt-28 mb-16 ">
-	<p className="flex justify-center   mb-5 font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px]">Login into your account</p>
-	</div>
-	
-     <form className="flex flex-col" >
-    <div className="flex flex-col m-4">
-	<label className="m-2 text-[16.2] font-family:'Poppings-SemiBold',Helvetica]  text-[16.2px]">Email ID:</label>
-	 <div className="flex flex-row h-[50px] logindiv w-full rounded-[8.08px]">
-	 
-	  <input placeholder="email" name="email" onChange={handleChange} value={form.email} className=" p-4 outline-none w-full loginInput"/>
-	  <div className="bg-blue-900 rounded-[8.08px] ">
-	  <img className="flex justify-center p-3" src={email}/>
-	  </div>
-	  
-	</div>
-   
-    </div>
-	<div className="flex flex-col m-4">
-	<label className="m-2 font-family:'Poppings-SemiBold',Helvetica]  text-[16.2px]">Password:</label>
-	 <div className="flex flex-row h-[50px]  logindiv w-full rounded-[8.08px] ">
-	
-	  <input placeholder="password" name="password" type="password" onChange={handleChange} value={form.password} className="p-4 outline-none w-full loginInput"/>
-	  <div className="bg-blue-900 rounded-[8.08px]">
-	  <img className="flex justify-center rounded-[8.08px] p-3" src={email}/>
-	  </div>
-	  
-	</div>
-   
-    </div>
- <div className="h-[50px] mt-8 loginbutton">
- <button className="bg-blue-900 p-3 text-white font-family:'Poppings-SemiBold',Helvetica] font-semibold text-[16.2px] rounded-[8.08px] w-full" onClick={handleClick}>Login Now</button>
-	
- </div>
- <div>Vous n{"'"}avez pas  un compte ?<button className="text-blue-600" onClick={()=>navigate('/signin')}>Sign in</button></div>
-	 </form>
-    </div>
+    <LoginContainer>
+      <Container maxWidth="lg">
+        <StyledPaper elevation={0}>
+          <Grid container spacing={4}>
+            {/* Left side - Building Image */}
+            <Grid item xs={12} md={6}>
+              <BuildingImage>
+                <Box textAlign="center">
+                  <ApartmentIcon sx={{ fontSize: 100, mb: 2 }} />
+                  <Typography variant="h4" component="h1" gutterBottom>
+                    Gestion Immobilière
+                  </Typography>
+                  <Typography variant="subtitle1">
+                    Plateforme professionnelle de gestion de copropriété
+                  </Typography>
+                </Box>
+              </BuildingImage>
+            </Grid>
+
+            {/* Right side - Login Form */}
+            <Grid item xs={12} md={6}>
+              <Box sx={{ p: { xs: 2, md: 4 } }}>
+                <Typography
+                  component="h2"
+                  variant="h5"
+                  sx={{
+                    mb: 4,
+                    fontWeight: 700,
+                    color: '#1a237e',
+                    textAlign: 'center'
+                  }}
+                >
+                  Accès Espace Syndic
+                </Typography>
+
+                <StyledForm noValidate>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Identifiant Email"
+                    name="email"
+                    autoComplete="email"
+                    autoFocus
+                    value={form.email}
+                    onChange={handleChange}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <EmailIcon color="primary" />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      mb: 3,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                      }
+                    }}
+                  />
+
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="Mot de passe"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    value={form.password}
+                    onChange={handleChange}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <LockIcon color="primary" />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      mb: 4,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                      }
+                    }}
+                  />
+
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    onClick={handleClick}
+                    sx={{
+                      mt: 2,
+                      mb: 3,
+                      py: 1.5,
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      background: 'linear-gradient(45deg, #1a237e 30%, #283593 90%)',
+                      '&:hover': {
+                        background: 'linear-gradient(45deg, #283593 30%, #1a237e 90%)',
+                      }
+                    }}
+                  >
+                    Se Connecter
+                  </Button>
+
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography variant="body2" component="span" color="text.secondary">
+                      Vous n'avez pas de compte ?{' '}
+                    </Typography>
+                    <Button
+                      color="primary"
+                      onClick={() => navigate('/signin')}
+                      sx={{
+                        textTransform: 'none',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Créer un compte
+                    </Button>
+                  </Box>
+                </StyledForm>
+              </Box>
+            </Grid>
+          </Grid>
+        </StyledPaper>
+      </Container>
+    </LoginContainer>
   );
 };
+
 export default FormLogin;

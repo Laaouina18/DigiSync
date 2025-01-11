@@ -33,14 +33,11 @@ const Login = () => {
 		}
 	}
 	return (
-		<div className="grid xl:grid-cols-[60%_40%] lg:grid-cols-[60%_40%]  w-full h-full">
-			<img className="w-12/12" src={Backgroundlogin} />
-			<div className="flex flex-row justify-center m-2">
+	
 				<FormLogin handleChange={handleChange} handleClick={handleClick} form={Form} />
-				{/* <div className="text-center text-red-900">{message}</div> */}
-			</div>
+		
 
-		</div>
+	
 	)
 
 }
