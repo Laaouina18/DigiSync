@@ -8,7 +8,12 @@ const paymentSchema = new mongoose.Schema({
     email: String,
     telephone: String
   },
- 
+
+  syndic:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   charge: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Charge',

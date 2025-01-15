@@ -4,31 +4,48 @@ import Immeuble from '../models/Immeuble.js';
 import Appartement from '../models/Appartment.js';
 
 
-  export const createCharge=async(req, res) => {
-    console.log("im",req.body)
-    try {
-      const { immeuble,  ...chargeData } = req.body;
-      
-      const charge = new Charge({
-        ...chargeData,
-        immeuble: immeuble,
-      
-      });
-      await charge.save();
+export const createCharge = async (req, res) => {
+  console.log("im", req.body);
+  try {
+    const { immeuble, payerType, payerDetails, ...chargeData } = req.body;
 
-      // Mise à jour des références
-      await Immeuble.findByIdAndUpdate(
-        immeuble,
-        { $push: { charges: charge._id } }
-      );
-
-   
-
-      res.status(201).json(charge);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+    // Validation supplémentaire si nécessaire
+    if (!['client', 'syndic'].includes(payerType)) {
+      return res.status(400).json({ message: "Type de payeur invalide." });
     }
+
+    if (payerType === 'client') {
+      if (!payerDetails?.nom || !payerDetails?.prenom) {
+        return res
+          .status(400)
+          .json({ message: "Le client doit avoir un nom et un prénom." });
+      }
+    } else if (payerType === 'syndic' && !payerDetails?.nom) {
+      return res
+        .status(400)
+        .json({ message: "Le syndic doit avoir un nom." });
+    }
+
+    // Création de la charge
+    const charge = new Charge({
+      ...chargeData,
+      payerType,
+      payerDetails,
+      immeuble,
+    });
+
+    await charge.save();
+
+    // Mise à jour des références dans l'immeuble
+    await Immeuble.findByIdAndUpdate(immeuble, {
+      $push: { charges: charge._id },
+    });
+
+    res.status(201).json(charge);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
+};
 
 export const getCharges= async(req, res) => {
     try {

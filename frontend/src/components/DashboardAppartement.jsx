@@ -75,14 +75,16 @@ const DashboardAppartement = () => {
       fetchAppartements();
       fetchImmeubles();
     }
-  }, [token]);
+  }, [token,userId]);
 
   const fetchAppartements = async () => {
     try {
       const response = await axios.get('/appartements', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      setAppartements(response.data);
+      console.log(response.data)
+      const apps=response.data?.filter(a=> a.syndic===userId)
+      setAppartements(apps);
     } catch (error) {
       showAlert('Erreur lors du chargement des appartements', 'error');
     }

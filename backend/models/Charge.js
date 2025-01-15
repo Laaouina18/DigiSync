@@ -1,4 +1,3 @@
-// models/Charge.js
 import mongoose from 'mongoose';
 
 const chargeSchema = new mongoose.Schema({
@@ -19,12 +18,33 @@ const chargeSchema = new mongoose.Schema({
   },
   periodicite: {
     type: String,
-    enum: ['MENSUEL', 'TRIMESTRIEL', 'ANNUEL', 'PONCTUEL'],
-    default: 'MENSUEL'
+    enum: ['MENSUEL', 'autre', 'ANNUEL', 'PONCTUEL'],
+    default: 'autre'
   },
   immeuble: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Immeuble'
+  },
+  payerType: {
+    type: String,
+    enum: ['client', 'syndic'], // Enum pour identifier le type de payeur
+    required: true
+  },
+  payerDetails: {
+    type: Object, // Détails du payeur
+    required: true,
+    validate: {
+      validator: function (value) {
+        // Validation conditionnelle pour s'assurer que les détails correspondent au type de payeur
+        if (this.payerType === 'client') {
+          return value.nom && value.prenom; // Client doit avoir nom et prénom
+        } else if (this.payerType === 'syndic') {
+          return value.nom; // Syndic doit avoir un nom
+        }
+        return false;
+      },
+      message: "Les détails du payeur ne sont pas valides pour le type spécifié."
+    }
   }
 }, { timestamps: true });
 

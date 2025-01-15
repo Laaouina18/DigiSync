@@ -91,32 +91,36 @@ const DashboardCharges = () => {
 
   useEffect(() => {
     if (token) {
-      fetchCharges();
+   
       fetchImmeubles();
     }
-  }, [token]);
+  }, [token,userId]);
 
-  const fetchCharges = async () => {
-    try {
-      const response = await axios.get('/Syndic/charges', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      setCharges(response.data);
-    } catch (error) {
-      showAlert('Erreur lors du chargement des charges', 'error');
-    }
-  };
 
   const fetchImmeubles = async () => {
     try {
       const response = await axios.get('/Syndic/immeubles', {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'Authorization': `Bearer ${token}` },
       });
-      setImmeubles(response.data);
+  
+      const immeubles = response.data;
+  
+      // Extraire les charges de chaque immeuble
+      const allCharges = immeubles.reduce((acc, immeuble) => {
+        if (immeuble.charges) {
+          return [...acc, ...immeuble.charges];
+        }
+        return acc;
+      }, []);
+  
+      // Mettre à jour les états
+      setImmeubles(immeubles);
+      setCharges(allCharges); // Supposons que setCharges est défini pour gérer les charges
     } catch (error) {
       showAlert('Erreur lors du chargement des immeubles', 'error');
     }
   };
+  
 
   const handleCreateCharge = async () => {
     try {
@@ -129,7 +133,7 @@ const DashboardCharges = () => {
       
       if (response.data) {
         showAlert('Charge créée avec succès');
-        fetchCharges();
+        fetchImmeubles ();
         setOpenChargeDialog(false);
         resetChargeForm();
       }
@@ -149,7 +153,7 @@ const DashboardCharges = () => {
       
       if (response.data) {
         showAlert('Charge modifiée avec succès');
-        fetchCharges();
+        fetchImmeubles ();
         setOpenChargeDialog(false);
         resetChargeForm();
       }
@@ -163,7 +167,7 @@ const DashboardCharges = () => {
       await axios.delete(`/Syndic/charges/${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      fetchCharges();
+      fetchImmeubles ();
       showAlert('Charge supprimée avec succès');
     } catch (error) {
       showAlert('Erreur lors de la suppression', 'error');
@@ -219,10 +223,10 @@ const DashboardCharges = () => {
       const searchLower = searchQuery.toLowerCase();
       return (
         charge.type.toLowerCase().includes(searchLower) ||
-        charge.description.toLowerCase().includes(searchLower) ||
-        charge.immeuble?.nom.toLowerCase().includes(searchLower) ||
-        charge.montant.toString().includes(searchLower) ||
-        charge.periodicite.toLowerCase().includes(searchLower)
+        charge.description?.toLowerCase().includes(searchLower) ||
+        charge?.immeuble?.nom?.toLowerCase().includes(searchLower) ||
+        charge.montant?.toString().includes(searchLower) ||
+        charge?.periodicite.toLowerCase().includes(searchLower)
       );
     });
 

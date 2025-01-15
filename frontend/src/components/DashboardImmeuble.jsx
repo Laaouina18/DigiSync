@@ -101,6 +101,7 @@ const DashboardImmeuble = () => {
       const response = await axios.get('/Syndic/immeubles', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      console.log(response.data)
       setImmeubles(response.data);
     } catch (error) {
       showAlert('Erreur lors du chargement des immeubles', 'error');

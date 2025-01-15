@@ -45,7 +45,6 @@ const getApp= async (req, res) => {
 
 
 const CreateApp = async (req, res) => {
-	console.log('hhf',req.body.syndic)
     try {
         const { immeuble } = req.body;
        

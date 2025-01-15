@@ -1,58 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  Paper,
-  Button,
-  Card,
-  CardContent,
-  IconButton,
-  Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  useTheme,
-  alpha,
-  TextField,
-  InputAdornment,
-  Chip,
-  Divider,
-  Stack,
-  Fade,
-  LinearProgress,
-  Alert
+  Box, Container, Grid, Typography, Paper, Button,
+  Card, CardContent, IconButton, Avatar, Dialog,
+  DialogTitle, DialogContent, DialogActions, useTheme,
+  alpha, Chip, Divider, Stack, Fade, LinearProgress, Alert
 } from '@mui/material';
 import {
-  Payment as PaymentIcon,
-  AccountBalance,
-  AttachMoney,
-  TrendingUp,
-  Add,
-  Search,
-  Person,
-  Phone,
-  Email,
-  Schedule,
-  Warning,
-  Delete,
-  Edit,
-  Visibility
+  Payment as PaymentIcon, AccountBalance, AttachMoney,
+  TrendingUp, Add, Person, Phone, Email, Schedule,
+  Warning, Delete, Edit, Visibility
 } from '@mui/icons-material';
 import axios from '../api/Axios';
 import { PaymentDialog, PaymentFilterForm, PaymentReceiptDialog } from "./dialogs/PaymentDialog.jsx";
 
 const PaymentDashboard = () => {
   const theme = useTheme();
-  const [token, setToken] = useState();
-  const [userId, setUserId] = useState();
+  const [token, setToken] = useState('');
+  const [userId, setUserId] = useState('');
   const [payments, setPayments] = useState([]);
   const [charges, setCharges] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedPayment, setSelectedPayment] = useState(null);
+  const [paymentForReceipt, setPaymentForReceipt] = useState(null);
   const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
   const [filters, setFilters] = useState({
     startDate: '',
@@ -61,17 +31,20 @@ const PaymentDashboard = () => {
   });
   const [summary, setSummary] = useState({
     totalRecu: 0,
-    totalCharges: 0,
+    nombreCharges: 0,
     chargesImpayees: 0,
-    benefice: 0,
-    nombrePaiements: 0,
+    totalRecuParClient: 0,
+    totalRecuParSyndic: 0,
     nombreCharges: 0
   });
 
-  // Chargement initial
-  useEffect(() => {
-    loadInitialData();
-  }, []);
+  // Fonction utilitaire pour gérer les erreurs HTTP
+  const handleApiError = (error, customMessage) => {
+    const errorMessage = error.response?.data?.message || error.message || customMessage;
+    setError(errorMessage);
+  };
+
+  // Chargement des données utilisateur
   useEffect(() => {
     const user = localStorage.getItem('user');
     if (user) {
@@ -81,13 +54,30 @@ const PaymentDashboard = () => {
     }
   }, []);
 
+  // Chargement initial des données
+  useEffect(() => {
+    if (token && userId) {
+      loadInitialData();
+    }
+  }, [token, userId]);
 
   // Effet pour les filtres de date
   useEffect(() => {
-    if (filters.startDate && filters.endDate) {
+    if (filters.startDate && filters.endDate && token && userId) {
       fetchPaymentsByPeriod();
     }
-  }, [filters.startDate, filters.endDate]);
+  }, [filters.startDate, filters.endDate, token, userId]);
+
+  // Effet pour la recherche avec debounce
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      if (filters.searchQuery) {
+        handleSearch();
+      }
+    }, 500);
+
+    return () => clearTimeout(debounceTimer);
+  }, [filters.searchQuery]);
 
   const loadInitialData = async () => {
     setLoading(true);
@@ -98,7 +88,7 @@ const PaymentDashboard = () => {
         fetchCharges()
       ]);
     } catch (error) {
-      setError("Erreur lors du chargement des données");
+      handleApiError(error, "Erreur lors du chargement des données");
     } finally {
       setLoading(false);
     }
@@ -106,57 +96,73 @@ const PaymentDashboard = () => {
 
   const fetchPayments = async () => {
     try {
-      const response = await axios.get('/payement', {
+      const response = await axios.get(`/payement/${userId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      console.log(response.data)
       setPayments(response.data);
     } catch (error) {
-      throw new Error('Erreur lors du chargement des paiements');
+      handleApiError(error, 'Erreur lors du chargement des paiements');
     }
   };
 
   const fetchPaymentsByPeriod = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get('/payement/period', {
+      const response = await axios.get(`/payement/period/${userId}`, {
         params: {
           startDate: filters.startDate,
           endDate: filters.endDate
-        }
-      }, {
+        },
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      console.log(response.data)
       setPayments(response.data.payments);
     } catch (error) {
-      setError('Erreur lors du chargement des paiements par période');
+      handleApiError(error, 'Erreur lors du chargement des paiements par période');
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchSummary = async () => {
     try {
-      const response = await axios.get('/payement/summary', {
+      const response = await axios.get(`/payement/summary/${userId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      console.log(response.data)
       setSummary(response.data);
     } catch (error) {
-      throw new Error('Erreur lors du chargement du résumé');
+      handleApiError(error, 'Erreur lors du chargement du résumé');
     }
   };
 
   const fetchCharges = async () => {
     try {
-      const response = await axios.get('/syndic/charges', {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const response = await axios.get('/Syndic/immeubles', {
+        headers: { 'Authorization': `Bearer ${token}` },
       });
-      setCharges(response.data);
+  
+      const immeubles = response.data;
+  
+      // Extraire les charges de chaque immeuble
+      const allCharges = immeubles.reduce((acc, immeuble) => {
+        if (immeuble.charges) {
+          return [...acc, ...immeuble.charges];
+        }
+        return acc;
+      }, []);
+  
+    
+      setCharges(allCharges);
     } catch (error) {
-      console.log(error)
-      throw new Error('Erreur lors du chargement des charges');
-     
+      handleApiError(error, 'Erreur lors du chargement des charges');
     }
   };
 
   const handlePaymentSubmit = async (paymentData) => {
     setLoading(true);
+    paymentData.syndic=userId;
     try {
       await axios.post('/payement', paymentData, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -164,37 +170,11 @@ const PaymentDashboard = () => {
       await loadInitialData();
       setOpenPaymentDialog(false);
     } catch (error) {
-      setError("Erreur lors de l'enregistrement du paiement");
+      handleApiError(error, "Erreur lors de l'enregistrement du paiement");
     } finally {
       setLoading(false);
     }
   };
-  // Chargement initial des données
-  useEffect(() => {
-    loadInitialData();
-  }, [token]);
-
-  // Effet pour la recherche avec debounce
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      handleSearch();
-    }, 500);
-
-    return () => clearTimeout(debounceTimer);
-  }, [filters.searchQuery]);
-
-
-  // Gestionnaires d'événements
-  const handleSearch = () => {
-    const searchLower = filters.searchQuery.toLowerCase();
-    return payments.filter(payment => 
-      payment.client.nom.toLowerCase().includes(searchLower) ||
-      payment.client.prenom.toLowerCase().includes(searchLower) ||
-      payment.client.email.toLowerCase().includes(searchLower) ||
-      payment.charge.type.toLowerCase().includes(searchLower)
-    );
-  };
-
 
   const handlePaymentDelete = async (paymentId) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce paiement ?')) {
@@ -205,7 +185,7 @@ const PaymentDashboard = () => {
         });
         await loadInitialData();
       } catch (error) {
-        setError("Erreur lors de la suppression du paiement");
+        handleApiError(error, "Erreur lors de la suppression du paiement");
       } finally {
         setLoading(false);
       }
@@ -220,10 +200,22 @@ const PaymentDashboard = () => {
       });
       await loadInitialData();
     } catch (error) {
-      setError("Erreur lors de la modification du paiement");
+      handleApiError(error, "Erreur lors de la modification du paiement");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = () => {
+    if (!filters.searchQuery) return payments;
+    
+    const searchLower = filters.searchQuery.toLowerCase();
+    return payments.filter(payment => 
+      payment.client.nom.toLowerCase().includes(searchLower) ||
+      payment.client.prenom.toLowerCase().includes(searchLower) ||
+      payment.client.email.toLowerCase().includes(searchLower) ||
+      payment.charge.type.toLowerCase().includes(searchLower)
+    );
   };
 
   // Composant StatCard
@@ -339,11 +331,11 @@ const PaymentDashboard = () => {
             <Box display="flex" alignItems="center" gap={1}>
               <AttachMoney color="success" />
               <Typography variant="h5" color="success.main" fontWeight="bold">
-                {payment.charge.montant.toLocaleString()} DH
+                {payment?.charge?.montant.toLocaleString()} DH
               </Typography>
             </Box>
             <Typography variant="body2" color="text.secondary" mt={1}>
-              Type: {payment.charge.type}
+              Type: {payment?.charge?.type}
             </Typography>
           </Box>
 
@@ -426,7 +418,7 @@ const PaymentDashboard = () => {
             <StatCard
               icon={AccountBalance}
               title="Total Charges"
-              value={summary.totalCharges}
+              value={summary.nombreCharges}
               color={theme.palette.success.main}
               subtitle="Montant total des charges"
             />
@@ -494,12 +486,12 @@ const PaymentDashboard = () => {
         onSubmit={handlePaymentSubmit}
         charges={charges}
       />
-{/* 
+
       <PaymentReceiptDialog
         open={!!paymentForReceipt}
         onClose={() => setPaymentForReceipt(null)}
         payment={paymentForReceipt}
-      /> */}
+      />
 
       <Dialog
         open={Boolean(selectedPayment)}

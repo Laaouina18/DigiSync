@@ -10,7 +10,6 @@ import {
   Button,
   MenuItem,
 } from '@mui/material';
-
 export const ChargeDialog = ({
   open,
   onClose,
@@ -18,19 +17,14 @@ export const ChargeDialog = ({
   setFormData,
   onSubmit,
   immeubles,
- 
   isEdit
 }) => {
-  const periodicites = [
-    'MENSUEL',
-    'TRIMESTRIEL',
-    'ANNUEL',
-    'PONCTUEL'
-  ];
+  const periodicites = ['MENSUEL', 'TRIMESTRIEL', 'ANNUEL', 'PONCTUEL'];
+  const payerTypes = ['client', 'syndic'];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
@@ -111,6 +105,75 @@ export const ChargeDialog = ({
             shrink: true,
           }}
         />
+        <TextField
+          select
+          fullWidth
+          label="Type de payeur"
+          name="payerType"
+          value={formData.payerType}
+          onChange={handleChange}
+          margin="normal"
+        >
+          {payerTypes.map((type) => (
+            <MenuItem key={type} value={type}>
+              {type === 'client' ? 'Client' : 'Syndic'}
+            </MenuItem>
+          ))}
+        </TextField>
+        {formData.payerType === 'client' && (
+          <>
+            <TextField
+              fullWidth
+              label="Nom du client"
+              name="payerDetails.nom"
+              value={formData.payerDetails?.nom || ''}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  payerDetails: {
+                    ...prev.payerDetails,
+                    nom: e.target.value
+                  }
+                }))
+              }
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Prénom du client"
+              name="payerDetails.prenom"
+              value={formData.payerDetails?.prenom || ''}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  payerDetails: {
+                    ...prev.payerDetails,
+                    prenom: e.target.value
+                  }
+                }))
+              }
+              margin="normal"
+            />
+          </>
+        )}
+        {formData.payerType === 'syndic' && (
+          <TextField
+            fullWidth
+            label="Nom du syndic"
+            name="payerDetails.nom"
+            value={formData.payerDetails?.nom || ''}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                payerDetails: {
+                  ...prev.payerDetails,
+                  nom: e.target.value
+                }
+              }))
+            }
+            margin="normal"
+          />
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Annuler</Button>

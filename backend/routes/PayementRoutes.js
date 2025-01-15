@@ -9,8 +9,8 @@ import {
 const router = express.Router();
 
 router.post('/', createPayment);
-router.get('/', getPayments);
-router.get('/summary', getFinancialSummary);
-router.get('/period', getPaymentsByPeriod);
+router.get('/:id', getPayments);
+router.get('/summary/:id', getFinancialSummary);
+router.get('/period/:id', getPaymentsByPeriod);
 
 export default router;
