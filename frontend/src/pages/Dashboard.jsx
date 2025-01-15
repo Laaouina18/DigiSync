@@ -1,293 +1,351 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { CreateAPP, fetchAPPs, DeleteAPP, UpdateAPP } from "../redux/actions/AppActions.js";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Container,
-  Grid,
-  Snackbar,
-  Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   Typography,
+  IconButton,
+  Avatar,
+  Divider,
+  Menu,
+  MenuItem,
   useTheme,
-  useMediaQuery
+  alpha,
+  Button
 } from '@mui/material';
-import SyndicDashboard from "../components/cart";
-import Appartement from "../components/Appartement";
-import Sidebar from "../components/Sidebar";
-import Form from "../components/Form";
+import {
+  Building,
+  Home,
+  CreditCard,
+  ChevronLeft,
+  ChevronRight,
+  Menu as MenuIcon,
+  LogOut,
+  User,
+  Settings,
+  Bell,
+  HelpCircle,
+  ChevronDown
+} from 'lucide-react';
+import DashboardImmeuble from '../components/DashboardImmeuble';
+import DashboardAppartement from '../components/DashboardAppartement';
+import DashboardCharges from '../components/DashboardCharges';
+import { useAuth } from './hooks/useAuth';
 
-const SyndicLogo = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80" style={{ width: '200px', height: 'auto' }}>
-    <rect x="0" y="10" width="300" height="60" rx="8" fill="#ffffff"/>
-    <g transform="translate(20, 20)">
-      <path d="M0 40 L20 0 L40 40 Z" fill="#2196F3"/>
-      <rect x="8" y="15" width="6" height="6" fill="white"/>
-      <rect x="26" y="15" width="6" height="6" fill="white"/>
-      <rect x="17" y="25" width="6" height="15" fill="white"/>
-    </g>
-    <text x="70" y="50" fontFamily="Arial" fontWeight="bold" fontSize="28" fill="#1976D2">
-      Syndic
-      <tspan fill="#424242">Pro</tspan>
-    </text>
-    <g transform="translate(220, 30)">
-      <rect x="0" y="0" width="4" height="20" fill="#2196F3"/>
-      <rect x="8" y="5" width="4" height="15" fill="#64B5F6"/>
-      <rect x="16" y="10" width="4" height="10" fill="#90CAF9"/>
-    </g>
-    <text x="70" y="65" fontFamily="Arial" fontSize="12" fill="#757575">
-      Gestion immobilière intelligente
-    </text>
-  </svg>
-);
+const DRAWER_WIDTH = 280;
 
-const Dashboard = () => {
+const MainDashboard = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  
-  const [ajouter, setAjouter] = useState(false);
-  const [type, setType] = useState("submit");
-  const [selectedId, setSelectedId] = useState("");
-  const Apps = useSelector((state) => state.AppReducer.APPs);
-  const dispatch = useDispatch();
-  const [status, setStatus] = useState(false);
-  
-  // Alert states
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertSeverity, setAlertSeverity] = useState("success");
-  
-  // Delete confirmation dialog
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
+  const { token, userId, user, logout } = useAuth();
+  const [currentTab, setCurrentTab] = useState(0);
+  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileMenu, setProfileMenu] = useState(null);
+  const [notificationMenu, setNotificationMenu] = useState(null);
 
-  const [FormData, setFormdata] = useState({
-    etage: "",
-    numero: "",
-    immeuble: "",
-    client: "",
-    address: "",
-    prix: ""
-  });
-
-  const showAlert = (message, severity = "success") => {
-    setAlertMessage(message);
-    setAlertSeverity(severity);
-    setAlertOpen(true);
+  const handleTabChange = (newValue) => {
+    setCurrentTab(newValue);
+    setMobileOpen(false);
   };
 
-  const handleChange = (e) => {
-    const { value, name } = e.target;
-    setFormdata((prv) => ({
-      ...prv,
-      [name]: value
-    }));
-  };
-
-  const isValidPrice = (price) => {
-    return !isNaN(parseFloat(price)) && isFinite(price);
-  };
-
-  const isValidEtage = (etage) => {
-    return typeof etage === "number" || (typeof etage === "string" && etage.trim() !== "");
-  };
-
-  const Show = () => {
-    setAjouter(true);
-  };
-
-  useEffect(() => {
-    dispatch(fetchAPPs());
-  }, [dispatch]);
-
-  const handleSubmit = () => {
-    if (!isValidPrice(FormData.prix) || !isValidEtage(FormData.etage)) {
-      showAlert("Prix ou étage invalide", "error");
-      return;
+  const handleDrawerToggle = () => {
+    if (window.innerWidth < 1200) {
+      setMobileOpen(!mobileOpen);
+    } else {
+      setDrawerOpen(!drawerOpen);
     }
+  };
 
-    const fieldsWithErrors = Object.keys(FormData).filter(
-      (field) => FormData[field].trim() === ""
-    );
+  const menuItems = [
+    { icon: <Building size={20} />, text: 'Immeubles', index: 0 },
+    { icon: <Home size={20} />, text: 'Appartements', index: 1 },
+    { icon: <CreditCard size={20} />, text: 'Charges', index: 2 }
+  ];
 
-    if (fieldsWithErrors.length > 0) {
-      showAlert(
-        `Veuillez remplir tous les champs: ${fieldsWithErrors.join(", ")}`,
-        "error"
-      );
-      return;
+  const renderContent = () => {
+    switch (currentTab) {
+      case 0:
+        return <DashboardImmeuble />;
+      case 1:
+        return <DashboardAppartement />;
+      case 2:
+        return <DashboardCharges />;
+      default:
+        return null;
     }
-
-    dispatch(CreateAPP(FormData));
-    clearForm();
-    showAlert("Appartement ajouté avec succès!");
   };
 
-  const clearForm = () => {
-    setType("submit");
-    setStatus(false);
-    setFormdata({
-      etage: "",
-      numero: "",
-      immeuble: "",
-      client: "",
-      address: "",
-      prix: ""
-    });
-    setAjouter(false);
-  };
-
-  const handleDeleteConfirm = () => {
-    dispatch(DeleteAPP(deleteId));
-    setDeleteDialogOpen(false);
-    showAlert("Appartement supprimé avec succès!");
-  };
-
-  const supprimer = (id) => {
-    setDeleteId(id);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleupdate = (app) => {
-    setStatus(true);
-    setSelectedId(app._id);
-    setFormdata(app);
-    setType("update");
-  };
-
-  const changerStatus = () => {
-    setStatus(true);
-    setAjouter(false);
-  };
-
-  const update = () => {
-    if (!isValidPrice(FormData.prix) || !isValidEtage(FormData.etage)) {
-      showAlert("Prix ou étage invalide", "error");
-      return;
-    }
-
-    dispatch(UpdateAPP(FormData, selectedId));
-    clearForm();
-    showAlert("Appartement mis à jour avec succès!");
-  };
-
-  return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      minHeight: '100vh',
-      bgcolor: 'background.default'
-    }}>
-      <Container maxWidth={false} sx={{ py: 2 }}>
-        {/* Logo Header */}
-        <Box sx={{ 
-          mb: 3, 
-          p: 2, 
-          display: 'flex', 
-          justifyContent: isMobile ? 'center' : 'flex-start',
-          boxShadow: 1,
-          borderRadius: 1,
-          bgcolor: 'white'
-        }}>
-          <SyndicLogo />
+  const drawer = (
+    <>
+      <Box
+        sx={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            p: 2,
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Building size={32} color={theme.palette.primary.main} />
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              SyndicPro
+            </Typography>
+          </Box>
+          <IconButton onClick={handleDrawerToggle}>
+            {drawerOpen ? <ChevronLeft /> : <ChevronRight />}
+          </IconButton>
         </Box>
 
-        {/* Main Content */}
-        <Grid container spacing={3}>
-          {/* Sidebar */}
-		  <Grid item xs={12} md={3} lg={2}>
-  <Sidebar />
-</Grid>
-          
-          {/* Main Content Area */}
-          <Grid item xs={12} md={9} lg={10}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      
-<SyndicDashboard
-  numApartments={Apps.length}
-  numUsers={150}
-  totalAmount={75000}
-  currency="dhs"
-/>
-              <Appartement
-                show={Show}
-                ajouter={ajouter}
-                handlClick={changerStatus}
-                supprimer={supprimer}
-                update={handleupdate}
-              />
-            </Box>
-          </Grid>
-        </Grid>
+        <Divider />
 
-        {/* Form Component */}
-        <Form
-          type={type}
-          update={update}
-          status={status}
-          clear={clearForm}
-          setStatus={setStatus}
-          formData={FormData}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-        />
-
-        {/* Alert Snackbar */}
-        <Snackbar
-          open={alertOpen}
-          autoHideDuration={6000}
-          onClose={() => setAlertOpen(false)}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <Alert
-            onClose={() => setAlertOpen(false)}
-            severity={alertSeverity}
-            variant="filled"
-            sx={{ width: '100%' }}
-            elevation={6}
+        <Box sx={{ p: 2 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            // startIcon={<Plus size={16} />}
+            sx={{
+              borderRadius: '8px',
+              textTransform: 'none',
+              py: 1
+            }}
           >
-            {alertMessage}
-          </Alert>
-        </Snackbar>
+            Nouveau
+          </Button>
+        </Box>
 
-        {/* Delete Confirmation Dialog */}
-        <Dialog
-          open={deleteDialogOpen}
-          onClose={() => setDeleteDialogOpen(false)}
-          aria-labelledby="delete-dialog-title"
+        <List sx={{ flexGrow: 1, px: 2 }}>
+          {menuItems.map((item) => (
+            <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+              <ListItemButton
+                onClick={() => handleTabChange(item.index)}
+                selected={currentTab === item.index}
+                sx={{
+                  borderRadius: '8px',
+                  '&.Mui-selected': {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.15),
+                    }
+                  }
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+
+        <Divider />
+
+        <Box sx={{ p: 2 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              p: 1,
+              borderRadius: '8px',
+              cursor: 'pointer',
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.primary.main, 0.05)
+              }
+            }}
+            onClick={(e) => setProfileMenu(e.currentTarget)}
+          >
+            <Avatar 
+              src={user?.avatar} 
+              alt={user?.name}
+              sx={{ width: 40, height: 40 }}
+            >
+              {user?.name?.charAt(0)}
+            </Avatar>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                {user?.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {user?.email}
+              </Typography>
+            </Box>
+            <ChevronDown size={20} />
+          </Box>
+        </Box>
+      </Box>
+
+      <Menu
+        anchorEl={profileMenu}
+        open={Boolean(profileMenu)}
+        onClose={() => setProfileMenu(null)}
+        PaperProps={{
+          sx: { width: 220, mt: 1 }
+        }}
+      >
+        <MenuItem onClick={() => setProfileMenu(null)}>
+          <ListItemIcon>
+            <User size={20} />
+          </ListItemIcon>
+          <ListItemText primary="Mon profil" />
+        </MenuItem>
+        <MenuItem onClick={() => setProfileMenu(null)}>
+          <ListItemIcon>
+            <Settings size={20} />
+          </ListItemIcon>
+          <ListItemText primary="Paramètres" />
+        </MenuItem>
+        <Divider />
+        <MenuItem 
+          onClick={() => {
+            setProfileMenu(null);
+            logout();
+          }}
+          sx={{ color: theme.palette.error.main }}
         >
-          <DialogTitle id="delete-dialog-title">
-            Confirmer la suppression
-          </DialogTitle>
-          <DialogContent>
-            <Typography>
-              Êtes-vous sûr de vouloir supprimer cet appartement ?
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button 
-              onClick={() => setDeleteDialogOpen(false)}
-              color="primary"
+          <ListItemIcon sx={{ color: 'inherit' }}>
+            <LogOut size={20} />
+          </ListItemIcon>
+          <ListItemText primary="Déconnexion" />
+        </MenuItem>
+      </Menu>
+    </>
+  );
+
+  return (
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      {/* Desktop Drawer */}
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: DRAWER_WIDTH,
+          flexShrink: 0,
+          display: { xs: 'none', lg: 'block' },
+          '& .MuiDrawer-paper': {
+            width: DRAWER_WIDTH,
+            boxSizing: 'border-box',
+            borderRight: `1px solid ${theme.palette.divider}`,
+            backgroundColor: theme.palette.background.paper,
+            boxShadow: 'none'
+          }
+        }}
+        open={drawerOpen}
+      >
+        {drawer}
+      </Drawer>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        ModalProps={{
+          keepMounted: true // Better open performance on mobile
+        }}
+        sx={{
+          display: { xs: 'block', lg: 'none' },
+          '& .MuiDrawer-paper': {
+            width: DRAWER_WIDTH,
+            boxSizing: 'border-box',
+            backgroundColor: theme.palette.background.paper
+          }
+        }}
+      >
+        {drawer}
+      </Drawer>
+
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          minHeight: '100vh',
+          backgroundColor: alpha(theme.palette.primary.main, 0.02)
+        }}
+      >
+        {/* Top Bar */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            p: 2,
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            backgroundColor: theme.palette.background.paper
+          }}
+        >
+          <IconButton
+            color="inherit"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { lg: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
+
+          <Box sx={{ flexGrow: 1 }} />
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton
+              onClick={(e) => setNotificationMenu(e.currentTarget)}
+              sx={{ 
+                bgcolor: alpha(theme.palette.primary.main, 0.05),
+                '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.1) }
+              }}
             >
-              Annuler
-            </Button>
-            <Button 
-              onClick={handleDeleteConfirm} 
-              color="error" 
-              variant="contained"
-              autoFocus
+              <Bell size={20} />
+            </IconButton>
+
+            <IconButton
+              sx={{ 
+                bgcolor: alpha(theme.palette.primary.main, 0.05),
+                '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.1) }
+              }}
             >
-              Supprimer
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Container>
+              <HelpCircle size={20} />
+            </IconButton>
+          </Box>
+        </Box>
+
+        {/* Page Content */}
+        <Box sx={{ p: 3 }}>
+          {renderContent()}
+        </Box>
+      </Box>
+
+      {/* Notifications Menu */}
+      <Menu
+        anchorEl={notificationMenu}
+        open={Boolean(notificationMenu)}
+        onClose={() => setNotificationMenu(null)}
+        PaperProps={{
+          sx: { width: 320, maxHeight: 480, mt: 1 }
+        }}
+      >
+        <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+            Notifications
+          </Typography>
+        </Box>
+        <Box sx={{ p: 2, textAlign: 'center' }}>
+          <Typography variant="body2" color="text.secondary">
+            Aucune notification
+          </Typography>
+        </Box>
+      </Menu>
     </Box>
   );
 };
 
-export default Dashboard;
+export default MainDashboard;

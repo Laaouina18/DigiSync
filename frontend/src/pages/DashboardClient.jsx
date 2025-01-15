@@ -13,17 +13,34 @@ import {
   Button,
   Typography,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  Paper,
+  Divider,
+  IconButton,
+  AppBar,
+  Toolbar,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText
 } from '@mui/material';
+import {
+  Menu as MenuIcon,
+  Notifications as NotificationsIcon,
+  Person as PersonIcon,
+  Settings as SettingsIcon,
+  ChevronLeft as ChevronLeftIcon
+} from '@mui/icons-material';
 import Clients from "../components/Clients";
 import Factures from "../components/Factures";
 import Sidebar from "../components/Sidebar";
 import { fetchAPPs } from "../redux/actions/AppActions";
 import { Payement, FetchPayement } from "../redux/actions/PayementActions";
 
-// Logo component from previous dashboard
+// Enhanced Logo component
 const SyndicLogo = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80" style={{ width: '200px', height: 'auto' }}>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80" style={{ width: '160px', height: 'auto' }}>
     <rect x="0" y="10" width="300" height="60" rx="8" fill="#ffffff"/>
     <g transform="translate(20, 20)">
       <path d="M0 40 L20 0 L40 40 Z" fill="#2196F3"/>
@@ -46,17 +63,17 @@ const SyndicLogo = () => (
   </svg>
 );
 
+const DRAWER_WIDTH = 240;
+
 const Dashboard = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const dispatch = useDispatch();
   
-  // Alert states
+  const [drawerOpen, setDrawerOpen] = useState(!isMobile);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("success");
-  
-  // Payment confirmation dialog
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
 
@@ -64,6 +81,10 @@ const Dashboard = () => {
     dispatch(fetchAPPs());
     dispatch(FetchPayement());
   }, [dispatch]);
+
+  useEffect(() => {
+    setDrawerOpen(!isMobile);
+  }, [isMobile]);
 
   const currentDate = new Date();
   const date = {
@@ -101,74 +122,179 @@ const Dashboard = () => {
   };
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      minHeight: '100vh',
-      bgcolor: 'background.default'
-    }}>
-      <Container maxWidth={false} sx={{ py: 2 }}>
-        {/* Logo Header */}
-        <Box sx={{ 
-          mb: 3, 
-          p: 2, 
-          display: 'flex', 
-          justifyContent: isMobile ? 'center' : 'flex-start',
-          boxShadow: 1,
-          borderRadius: 1,
-          bgcolor: 'white'
-        }}>
-          <SyndicLogo />
-        </Box>
+    <Box sx={{ display: 'flex' }}>
+      {/* AppBar */}
+      <AppBar position="fixed" sx={{ zIndex: theme.zIndex.drawer + 1 }}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={() => setDrawerOpen(!drawerOpen)}
+              sx={{ mr: 2, display: isMobile ? 'block' : 'none' }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <SyndicLogo />
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton color="inherit">
+              <NotificationsIcon />
+            </IconButton>
+            <IconButton color="inherit">
+              <SettingsIcon />
+            </IconButton>
+            <IconButton color="inherit">
+              <PersonIcon />
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
 
-        {/* Main Content */}
+      {/* Drawer */}
+      <Drawer
+        variant={isMobile ? 'temporary' : 'permanent'}
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        sx={{
+          width: DRAWER_WIDTH,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: DRAWER_WIDTH,
+            boxSizing: 'border-box',
+            bgcolor: 'background.default',
+            borderRight: '1px solid',
+            borderColor: 'divider'
+          },
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ overflow: 'auto', mt: 2 }}>
+          <Sidebar />
+        </Box>
+      </Drawer>
+
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+          ml: { sm: `${DRAWER_WIDTH}px` },
+          pt: { xs: 8, sm: 10 }
+        }}
+      >
         <Grid container spacing={3}>
-          {/* Sidebar */}
-		  <Grid item xs={12} md={3} lg={2}>
-  <Sidebar />
-</Grid>
+          <Grid item xs={12}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 3,
+                mb: 3,
+                bgcolor: 'primary.light',
+                color: 'primary.contrastText',
+                borderRadius: 2
+              }}
+            >
+              <Typography variant="h5" component="h1" gutterBottom>
+                Tableau de Bord
+              </Typography>
+              <Typography variant="subtitle1">
+                {`${currentDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}`}
+              </Typography>
+            </Paper>
+          </Grid>
           
-          {/* Main Content Area */}
-          <Grid item xs={12} md={9} lg={10}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Grid item xs={12}>
+            <Paper
+              elevation={2}
+              sx={{
+                p: 3,
+                borderRadius: 2,
+                bgcolor: 'background.paper'
+              }}
+            >
+              <Typography variant="h6" gutterBottom>
+                Gestion des Clients
+              </Typography>
+              <Divider sx={{ mb: 3 }} />
               <Clients date={date} payer={payer} />
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Paper
+              elevation={2}
+              sx={{
+                p: 3,
+                borderRadius: 2,
+                bgcolor: 'background.paper'
+              }}
+            >
+              <Typography variant="h6" gutterBottom>
+                Factures
+              </Typography>
+              <Divider sx={{ mb: 3 }} />
               <Factures />
-            </Box>
+            </Paper>
           </Grid>
         </Grid>
 
-        {/* Payment Confirmation Dialog */}
+        {/* Payment Dialog */}
         <Dialog
           open={paymentDialogOpen}
           onClose={() => setPaymentDialogOpen(false)}
-          aria-labelledby="payment-dialog-title"
+          PaperProps={{
+            sx: {
+              borderRadius: 2,
+              maxWidth: 'sm',
+              width: '100%'
+            }
+          }}
         >
-          <DialogTitle id="payment-dialog-title">
-            Confirmer le paiement
+          <DialogTitle sx={{ pb: 1 }}>
+            <Typography variant="h6">
+              Confirmer le paiement
+            </Typography>
           </DialogTitle>
           <DialogContent>
-            <Typography>
-              Voulez-vous confirmer le paiement pour cet appartement ?
-            </Typography>
-            {selectedPayment && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                Client: {selectedPayment.app.client}<br />
-                Montant: {selectedPayment.app.prix} DH<br />
-                Période: {selectedPayment.date.month}/{selectedPayment.date.year}
+            <Box sx={{ py: 2 }}>
+              <Typography variant="body1" gutterBottom>
+                Voulez-vous confirmer le paiement pour cet appartement ?
               </Typography>
-            )}
+              {selectedPayment && (
+                <Paper
+                  variant="outlined"
+                  sx={{ p: 2, mt: 2, bgcolor: 'background.default' }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    <Box component="span" sx={{ display: 'block', mb: 1 }}>
+                      <strong>Client:</strong> {selectedPayment.app.client}
+                    </Box>
+                    <Box component="span" sx={{ display: 'block', mb: 1 }}>
+                      <strong>Montant:</strong> {selectedPayment.app.prix} DH
+                    </Box>
+                    <Box component="span" sx={{ display: 'block' }}>
+                      <strong>Période:</strong> {selectedPayment.date.month}/{selectedPayment.date.year}
+                    </Box>
+                  </Typography>
+                </Paper>
+              )}
+            </Box>
           </DialogContent>
-          <DialogActions>
-            <Button 
+          <DialogActions sx={{ px: 3, pb: 3 }}>
+            <Button
               onClick={() => setPaymentDialogOpen(false)}
-              color="primary"
+              variant="outlined"
+              color="inherit"
             >
               Annuler
             </Button>
-            <Button 
-              onClick={handlePaymentConfirm} 
-              color="success" 
+            <Button
+              onClick={handlePaymentConfirm}
               variant="contained"
+              color="success"
               autoFocus
             >
               Confirmer le paiement
@@ -187,13 +313,15 @@ const Dashboard = () => {
             onClose={() => setAlertOpen(false)}
             severity={alertSeverity}
             variant="filled"
-            sx={{ width: '100%' }}
-            elevation={6}
+            sx={{
+              width: '100%',
+              boxShadow: theme.shadows[6]
+            }}
           >
             {alertMessage}
           </Alert>
         </Snackbar>
-      </Container>
+      </Box>
     </Box>
   );
 };

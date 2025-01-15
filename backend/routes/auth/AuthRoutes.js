@@ -1,7 +1,8 @@
 import {Router} from "express";
 const router = Router();
-import { CreateSyndic} from "../../controllers/SyndicController.js";
-import {Login} from "../../controllers/auth/AuthController.js";
-router.post("/inscrir",CreateSyndic);
-router.post("/login",Login)
+
+import *as authCtr from "../../controllers/auth/AuthController.js";
+
+router.post("/inscrir",authCtr.register);
+router.post("/login",authCtr.login)
 export default router;

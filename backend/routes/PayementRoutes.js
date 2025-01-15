@@ -1,8 +1,8 @@
 import {Router} from "express";
-import { createPayement,getPayement } from "../controllers/PayementController.js";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
+import * as payement  from "../controllers/PayementController.js";
+
 const router=Router();
 
-router.post("/", createPayement);
-router.get("/",getPayement);
+router.post("/", payement.createPayment);
+router.get("/",payement.getPayments);
 export default router;

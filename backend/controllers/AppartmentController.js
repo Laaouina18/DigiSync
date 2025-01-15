@@ -1,7 +1,7 @@
 import {validator,appartementSchema} from "../validation/JoiShema.js";
 import Appartement from "../models/Appartment.js";
 import Syndic from "../models/Syndic.js";
-
+import Immeuble from "../models/Immeuble.js"
 /**
  * @async
  * @route {GET} /Appartement
@@ -45,19 +45,19 @@ const getApp= async (req, res) => {
 
 
 const CreateApp = async (req, res) => {
+	console.log('hhf',req.body.syndic)
     try {
-        const { syndic } = req.body;
-        validator(appartementSchema, req.body);
-
+        const { immeuble } = req.body;
+       
         const appartementCreated = await Appartement.create(req.body);
-        const syndictoUpdate = await Syndic.findById(syndic);
+        const immeubletoUpdate = await Immeuble.findById(immeuble);
 
-        if (!syndictoUpdate) {
-            return res.status(404).json({ message: "Syndic not found" });
+        if (!immeubletoUpdate) {
+            return res.status(404).json({ message: "Immeuble not found" });
         }
 		
-        syndictoUpdate.Appartements.push(appartementCreated);
-        await syndictoUpdate.save();
+        immeubletoUpdate.appartements.push(appartementCreated);
+        await immeubletoUpdate.save();
 
         res.status(201).json(appartementCreated);
     } catch (error) {
@@ -76,7 +76,7 @@ const CreateApp = async (req, res) => {
  */
 const UpadetApp = async (req, res) => {
 	try {
-		validator(appartementSchema, req.body);
+		
 		const { id } = req.params;
 		const appartement = await Appartement.findByIdAndUpdate(id, req.body,{new:true});
 		res.status(200).json(appartement);

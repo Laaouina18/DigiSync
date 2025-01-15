@@ -1,38 +1,40 @@
-import mongoose from "mongoose";
-import Payement from "./Payement.js";
-import Syndic from "./Syndic.js"
+// models/Appartement.js
+import mongoose from 'mongoose';
+
 const appartementSchema = new mongoose.Schema({
-	numero: {
-		type: String,
-		required: true,
-	},
-	etage: {
-		type: String,
-		required: true,
-	},
-	client: {
-		type: String,
-		required: true
-	},
-	address: {
-		type: String,
-		required: true
-	},
-	prix: {
-		type: String,
-		required: true
-	},
-	immeuble: {
-		type: String,
-		required: true
-	},
-	payement: [{
-		type: mongoose.Schema.Types.ObjectId, ref: 'Payement'
-	}],
-	syndic:{
-		type:String,
-		required:true
-	}
-});
+  numero: {
+    type: String,
+    required: true
+  },
+  etage: String,
+  superficie: Number,
+  client: {
+    nom: String,
+    prenom: String,
+    email: String,
+    telephone: String
+  },
+  prix: Number,
+  immeuble: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Immeuble',
+    required: true
+  },
+  syndic: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Syndic',
+    required: true
+  },
+  payments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Payment'
+  }],
+  charges: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Charge'
+  }]
+}, { timestamps: true });
+
 const Appartement = mongoose.model('Appartement', appartementSchema);
+
 export default Appartement;

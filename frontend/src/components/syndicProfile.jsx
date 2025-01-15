@@ -48,7 +48,7 @@ const SyndicLogo = () => (
       </text>
     </svg>
   );
-  
+   
 const SyndicProfile = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));

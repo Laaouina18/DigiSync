@@ -1,41 +1,85 @@
-import Syndic from "../../models/Syndic.js";
-import { SyndicShema, validator } from "../../validation/JoiShema.js";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-
-import { generateToken } from "../../utils/generateToken.js";
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import User from '../../models/User.js';
+import Syndic from '../../models/Syndic.js';
 
 
-/**
- * @async
- * @route {GET}/
- * @access public
- * @returns {Promise<Document>}
- */
-const Login = async (req, res) => {
-    const { email, password } = req.body;
+  export const  register= async(req, res)  =>{
 
-    const syndic = await Syndic.findOne({ email });
+    try {
+      const { username,email, password, role, firstName, lastName, phone } = req.body;
+      
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email déjà utilisé' });
+      }
 
-    if (!syndic) {
-        return res.status(400).json({ message: "Ce compte n'existe pas" });
+      const user = new User({
+        username,
+        email,
+        password,
+        role
+      });
+      
+      await user.save();
+
+      if (role === 'SYNDIC') {
+        const syndic = new Syndic({
+          userId: user._id,
+          firstName,
+          lastName,
+          phone
+        });
+        await syndic.save();
+      }
+
+      res.status(201).json({ message: 'Utilisateur créé avec succès' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
+  }
 
-    const isPasswordValid = await bcrypt.compare(password, syndic.password);
+  export const  login= async(req, res) => {
+    console.log(req.body)
+    try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+      
+      if (!user) {
+        return res.status(404).json({ message: 'Utilisateur non trouvé' });
+      }
 
-    if (!isPasswordValid) {
-        return res.status(400).json({ message: "Mot de passe incorrect" });
+      const validPassword = await bcrypt.compare(password, user.password);
+      if (!validPassword) {
+        return res.status(401).json({ message: 'Mot de passe incorrect' });
+      }
+
+      const token = jwt.sign(
+        { id: user._id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+
+      res.status(200).json({ token, user: { id: user._id, email: user.email, role: user.role } });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-    const syndicEx = {
-        _id: syndic._id,
-        email: syndic.email,
-		firstName:syndic.firstName,
-		lastName:syndic.lastName
-    };
+  }
+  export const  changePassword=async(req, res) => {
+    try {
+      const { oldPassword, newPassword } = req.body;
+      const user = await User.findById(req.user.id);
 
-    const token = generateToken(syndic);
-    return res.status(200).json({ syndic: syndicEx, token });
-};
+      const validPassword = await bcrypt.compare(oldPassword, user.password);
+      if (!validPassword) {
+        return res.status(401).json({ message: 'Ancien mot de passe incorrect' });
+      }
 
+      user.password = newPassword;
+      await user.save();
 
-export {  Login };
+      res.status(200).json({ message: 'Mot de passe modifié avec succès' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }

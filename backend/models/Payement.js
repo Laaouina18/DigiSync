@@ -1,15 +1,22 @@
-import mongoose from "mongoose";
-import Appartement from "./Appartment.js";
-const PaymentShema = new mongoose.Schema({
-	date: {
-      month:{type:Number,required:true},
-	  year:{type:Number,required:true}
-	},
-	appartement: {
-		type: mongoose.Schema.Types.ObjectId, ref: 'Appartement',
-		required: true
-	}
-})
+// models/Payment.js
+import mongoose from 'mongoose';
 
-const Payement = mongoose.model('Payement', PaymentShema);
-export default Payement;
+const paymentSchema = new mongoose.Schema({
+  client: {
+    nom: String,
+    prenom: String,
+    email: String,
+    telephone: String
+  },
+ 
+  charge: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Charge',
+    required: true
+  },
+  datePayment: Date
+}, { timestamps: true });
+
+const Payment = mongoose.model('Payment', paymentSchema);
+
+export default Payment;
