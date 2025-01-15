@@ -24,7 +24,7 @@ import {
   Business as BusinessIcon,
   LocationOn as LocationIcon
 } from '@mui/icons-material';
-import Sidebar from "../components/Sidebar";
+
 const SyndicLogo = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80" style={{ width: '200px', height: 'auto' }}>
       <rect x="0" y="10" width="300" height="60" rx="8" fill="#ffffff"/>
@@ -110,24 +110,9 @@ const SyndicProfile = () => {
       bgcolor: 'background.default' 
     }}>
       <Container maxWidth={false} sx={{ py: 2 }}>
-           {/* Logo Header */}
-           <Box sx={{ 
-          mb: 3, 
-          p: 2, 
-          display: 'flex', 
-          justifyContent: isMobile ? 'center' : 'flex-start',
-          boxShadow: 1,
-          borderRadius: 1,
-          bgcolor: 'white'
-        }}>
-          <SyndicLogo />
-        </Box>
+        
 
-        <Grid container spacing={3}>
-          {/* Sidebar */}
-          <Grid item xs={12} md={3} lg={2}>
-            <Sidebar />
-          </Grid>
+      
 
           {/* Main Content */}
           <Grid item xs={12} md={9} lg={10}>
@@ -290,7 +275,7 @@ const SyndicProfile = () => {
               </Grid>
             </Paper>
           </Grid>
-        </Grid>
+    
       </Container>
 
       {/* Alert Snackbar */}

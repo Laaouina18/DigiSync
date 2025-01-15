@@ -5,9 +5,9 @@ import store from './redux/store';
 import Login from './pages/Login';
 import Signin from './pages/Signin';
 import Dashboard from './pages/Dashboard';
-import DashboardClient from './pages/DashboardClient';
+
 import NotFound from './pages/NotFound';
-import Facture from './components/Facture';
+
 import { Provider } from 'react-redux';
 import PrivetRoute from './PrivetRoute';
 import SyndicProfile from './components/syndicProfile';
