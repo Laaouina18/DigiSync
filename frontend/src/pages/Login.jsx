@@ -21,16 +21,18 @@ const Login = () => {
 
 	}
 	const handleClick = (e) => {
+		try{
 		e.preventDefault();
-		dispatch(LoginSyndic(Form));
-		const message = localStorage.getItem('message');
 
-		if (message) {
-			alert(message);
-				localStorage.removeItem('message');
-		} else {
+		dispatch(LoginSyndic(Form));
+		if(response.data){
 			navigate('/dashboard');
 		}
+		}catch(error){
+			console.log(error)
+		}
+			
+		
 	}
 	return (
 	

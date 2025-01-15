@@ -36,7 +36,7 @@ import DashboardAppartement from '../components/DashboardAppartement';
 import DashboardCharges from '../components/DashboardCharges';
 import PaymentDashboard from '../components/PayementDasboard';
 import { useAuth } from './hooks/useAuth';
-
+import { useNavigate } from 'react-router-dom';
 const DRAWER_WIDTH = 280;
 
 const MainDashboard = () => {
@@ -47,7 +47,7 @@ const MainDashboard = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileMenu, setProfileMenu] = useState(null);
   const [notificationMenu, setNotificationMenu] = useState(null);
-
+const navigate=useNavigate();
   const handleTabChange = (newValue) => {
     setCurrentTab(newValue);
     setMobileOpen(false);
@@ -198,7 +198,7 @@ const MainDashboard = () => {
           sx: { width: 220, mt: 1 }
         }}
       >
-        <MenuItem onClick={() => setProfileMenu(null)}>
+        <MenuItem onClick={() => navigate('/profile')}>
           <ListItemIcon>
             <User size={20} />
           </ListItemIcon>
@@ -213,8 +213,10 @@ const MainDashboard = () => {
         <Divider />
         <MenuItem 
           onClick={() => {
-            setProfileMenu(null);
-            logout();
+       
+            localStorage.clear();
+            navigate('/login')
+
           }}
           sx={{ color: theme.palette.error.main }}
         >

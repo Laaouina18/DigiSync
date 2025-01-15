@@ -24,10 +24,6 @@ const App = () => {
 		  <Route path="/dashboard" element={<Dashboard />} />
 		  <Route path="/" element={<Dashboard />} />
       <Route path="/profile" element={<SyndicProfile />} />
-		  <Route path="/dashboardclient" element={<DashboardClient />} />
-          <Route path="/facture" element={<Facture />} />
-		  <Route path="/dashboardclient" element={<DashboardClient />} />
-          <Route path="/facture" element={<Facture />} />
 		  </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
