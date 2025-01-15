@@ -213,7 +213,6 @@ const navigate=useNavigate();
         <Divider />
         <MenuItem 
           onClick={() => {
-       
             localStorage.clear();
             navigate('/login')
 
