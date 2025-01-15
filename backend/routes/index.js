@@ -4,7 +4,7 @@ import Syndic from "./SyndicRoutes.js";
 import auth from "./auth/AuthRoutes.js";
 import payement from "./PayementRoutes.js";
 
-
+ 
 const router = express.Router();
 
 router.use("/appartements",  appartement);

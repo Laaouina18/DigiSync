@@ -34,6 +34,7 @@ import {
 import DashboardImmeuble from '../components/DashboardImmeuble';
 import DashboardAppartement from '../components/DashboardAppartement';
 import DashboardCharges from '../components/DashboardCharges';
+import PaymentDashboard from '../components/PayementDasboard';
 import { useAuth } from './hooks/useAuth';
 
 const DRAWER_WIDTH = 280;
@@ -63,7 +64,8 @@ const MainDashboard = () => {
   const menuItems = [
     { icon: <Building size={20} />, text: 'Immeubles', index: 0 },
     { icon: <Home size={20} />, text: 'Appartements', index: 1 },
-    { icon: <CreditCard size={20} />, text: 'Charges', index: 2 }
+    { icon: <CreditCard size={20} />, text: 'Charges', index: 2 },
+    { icon: <CreditCard size={20} />, text: 'Payement', index: 3 }
   ];
 
   const renderContent = () => {
@@ -74,6 +76,8 @@ const MainDashboard = () => {
         return <DashboardAppartement />;
       case 2:
         return <DashboardCharges />;
+      case 3:
+        return <PaymentDashboard />;
       default:
         return null;
     }

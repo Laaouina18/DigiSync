@@ -1,8 +1,16 @@
-import {Router} from "express";
-import * as payement  from "../controllers/PayementController.js";
+import express from 'express';
+import {
+  createPayment,
+  getPayments,
+  getFinancialSummary,
+  getPaymentsByPeriod
+} from '../controllers/PayementController.js';
 
-const router=Router();
+const router = express.Router();
 
-router.post("/", payement.createPayment);
-router.get("/",payement.getPayments);
+router.post('/', createPayment);
+router.get('/', getPayments);
+router.get('/summary', getFinancialSummary);
+router.get('/period', getPaymentsByPeriod);
+
 export default router;
