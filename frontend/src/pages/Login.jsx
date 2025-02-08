@@ -25,7 +25,7 @@ const Login = () => {
 		e.preventDefault();
 
 		dispatch(LoginSyndic(Form));
-		if(response.data){
+		if(localStorage.getItem("user")){
 			navigate('/dashboard');
 		}
 		}catch(error){

@@ -41,7 +41,10 @@ const DRAWER_WIDTH = 280;
 
 const MainDashboard = () => {
   const theme = useTheme();
-  const { token, userId, user, logout } = useAuth();
+
+  const [token, setToken] = useState('');
+  const [userId, setUserId] = useState('');
+  const {  user, logout } = useAuth();
   const [currentTab, setCurrentTab] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -52,7 +55,16 @@ const navigate=useNavigate();
     setCurrentTab(newValue);
     setMobileOpen(false);
   };
-
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      const userData = JSON.parse(user);
+      setToken(userData.token);
+      setUserId(userData.user.id);
+    }else{
+      navigate('/login')
+    }
+  }, []);
   const handleDrawerToggle = () => {
     if (window.innerWidth < 1200) {
       setMobileOpen(!mobileOpen);
